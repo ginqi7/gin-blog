@@ -1,0 +1,14 @@
+<!-- Previous Post -->
+{% set prePost = collections.posts | getPreviousCollectionItem %}
+<!-- Next Post -->
+{% set nextPost = collections.posts | getNextCollectionItem %}
+
+<!-- Add Previous Link. -->
+{% if prePost %}
+<li>Previous: <a href="{{ prePost.url }}">{{ prePost.data.title }}</a></li>
+{% endif %}
+
+<!-- Add Next Link. -->
+{% if nextPost %}
+<li>Next: <a href="{{ nextPost.url }}">{{ nextPost.data.title }}</a></li>
+{% endif %}

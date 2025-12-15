@@ -1,0 +1,85 @@
+:root {
+    --color-secondary: #cccccc;
+    --color-background: white;
+    --font-size-small: 0.85em;
+    --line-height-small: 1.25em;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+th {
+    font-family: var(--font-family-title);
+    /* text-transform: uppercase; */
+}
+h1.title {
+    text-align: center;
+    font-size: 2.3em;
+    margin-bottom: 0;
+    font-weight: 400;
+}
+
+.org-bold {
+    font-weight: 400;
+}
+i,
+i a {
+    color: #999999;
+    font-style: normal;
+}
+.org-face-salient {
+    font-weight: 400;
+}
+
+blockquote {
+    color: #999999;
+    padding-top: 0;
+    margin-left: 1em;
+    padding-left: 1em;
+    border-left: 3px solid #cccccc;
+}
+
+ul.org-ul {
+    padding-left: 0;
+}
+ul.org-ul li {
+    margin-bottom: 0.5em;
+}
+
+ul.org-ul li p {
+    display: inline-block;
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
+ol.org-ol {
+    padding-left: 0;
+    margin-left: 2em;
+    counter-reset: li;
+}
+.org-ol li {
+    counter-increment: li;
+    margin-bottom: 0.25em;
+}
+
+.post-line {
+    width: 100%;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    /* border-width: 1.5px; */
+    border-top: 1px dashed #ccc; /* 设置顶部边框为虚线 */
+}
+
+body {
+    counter-reset: section;
+}
+h2 {
+    counter-reset: subsection;
+}
+
+article img {
+    border-radius: 15px;
+    width: 90%;
+}

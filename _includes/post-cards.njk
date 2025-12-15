@@ -1,0 +1,23 @@
+<div class="cards-container">
+  {% for post in postList %} {% if post.data.title != blank %}
+  <div class="post-card">
+    <div class="card-date">{{ post.date | dateformat }}</div>
+    <div class="card-title">
+      <a href="{{ post.url }}">{{ post.data.title }} </a>
+    </div>
+
+    <div class="categories">
+      <!-- Update tagsList -->
+      {% if post.data.tags %} {% set tagsList = post.data.tags %}
+      <!-- Show tags -->
+      {% for tag in tagsList %}
+      <div class="card-tag">
+        <a href="/archive/?tag={{tag}}"> #{{ tag }}</a>
+      </div>
+      {% endfor %} {% endif %}
+    </div>
+    <div class="card-summary">{{ post.content | abstract }}</div>
+    <a href="{{ post.url }}" class="read-more-btn">Read more</a>
+  </div>
+  {% endif %} {% endfor %}
+</div>

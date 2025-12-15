@@ -1,0 +1,35 @@
+<header>
+  <div id="preamble">
+    <div>
+      <a
+        aria-current="page"
+        class="font-effect-shadow-multiple header-title"
+        href="/"
+      >
+        {{ project.title }}
+      </a>
+      <div class="nav">
+        <input type="checkbox" id="nav-active" class="nav-active-checkbox" />
+        <div class="nav__toggle">
+          <label for="nav-active">
+            <span>Menu</span>
+          </label>
+        </div>
+        {% for nav in navs %} {% if nav.position == 'header' %}
+        <div class="image-container">
+          <a href="{{ nav.href }}" class="{{ nav.type }}">
+            <img
+              width="24"
+              height="24"
+              src="{{ nav.src }}"
+              alt="{{ nav.type }}"
+            />
+          </a>
+          <a href="{{ nav.href }}" class="image-text"> {{nav.show}} </a>
+        </div>
+        {% endif %} {% endfor %}
+      </div>
+      <div class="header-line"></div>
+    </div>
+  </div>
+</header>

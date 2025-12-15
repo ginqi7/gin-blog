@@ -1,0 +1,117 @@
+/* Tables */
+/* 假设这些 :root 变量已从 pre 样式中定义，或者我们在这里重新定义/适配它们 */
+:root {
+    /* 从 pre 代码块样式中借鉴或适配的变量 */
+    --table-container-bg: var(--org-src-container-bg, #2d2d2d);
+    --table-container-border-color: var(--org-src-container-border-color, #444);
+    --table-container-border-radius: var(
+        --org-src-container-border-radius,
+        8px
+    );
+    --table-container-margin: var(--org-src-container-margin, 1.5em 0);
+    --table-default-text-color: var(--org-src-default-text-color, #f0f0f0);
+    --table-box-shadow: var(
+        --org-src-container-box-shadow,
+        0 3px 8px rgba(0, 0, 0, 0.25)
+    );
+
+    /* 表格特有的样式变量 */
+    --table-font-family: system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+        "Helvetica Neue", sans-serif; /* 表格内容通常用无衬线字体更易读 */
+    --table-header-bg: #3a3a3a; /* 表头背景，可以和 pre 的头部类似 */
+    --table-header-text-color: #e0e0e0; /* 表头文字颜色 */
+    --table-cell-padding: 0.6em 0.8em; /* 单元格内边距，覆盖 cellpadding="6" */
+    --table-internal-border-color: #555; /* 表格内部线条颜色 */
+    --table-font-size: 0.9em; /* 表格字体大小 */
+}
+
+/* 针对具有特定属性的 table 进行样式化，以模拟 .org-src-container 的外观 */
+/* 你提供的 table 有 border="2" rules="groups" frame="hsides" */
+/* 我们可以用这些属性作为选择器，或者如果它是页面中唯一的这种表格，可以直接用 table */
+table {
+    /* 1. 基础设置与重置HTML属性 */
+    border-collapse: collapse; /* 合并边框，使线条更清晰 */
+    width: 100%; /* 让表格宽度适应其容器，或设置一个 max-width */
+    margin: var(--table-container-margin);
+    font-family: var(--table-font-family);
+    font-size: var(--table-font-size);
+    color: var(--table-default-text-color);
+    background-color: var(--table-container-bg); /* 应用背景色 */
+
+    /* 2. 应用类似 pre 的外边框和圆角 */
+    border: 1px solid var(--table-container-border-color); /* CSS border 会覆盖 HTML border="2" */
+    border-radius: var(--table-container-border-radius);
+    box-shadow: var(--table-box-shadow);
+
+    /* 3. overflow:hidden 配合 border-radius 来裁剪内部元素，确保圆角效果 */
+    overflow: hidden;
+}
+
+/* 表头单元格 (th) */
+table thead th {
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text-color);
+    font-weight: bold;
+    /* text-align 由 .org-left/right 等 class 控制，但可以设一个默认值 */
+    text-align: left;
+    border-bottom: 2px solid var(--table-container-border-color); /* 表头和表体之间的强调分隔线 */
+}
+
+/* 所有单元格 (th, td) 的通用样式 */
+table th,
+table td {
+    padding: var(--table-cell-padding); /* 覆盖 HTML cellpadding="6" */
+    border: 1px solid var(--table-internal-border-color); /* 内部单元格边框 */
+    vertical-align: top; /* 单元格内容顶部对齐，或middle/bottom */
+}
+
+/* 移除第一行表头单元格的顶部内部边框，最后一行表体单元格的底部内部边框，
+   以及最左和最右列单元格的相应外部边框，因为外部容器的边框已经存在了。
+   这样做可以避免双重边框。
+   （另一种方法是让 table 本身没有边框，完全由 th/td 的边框构成，但为了圆角，通常 table 本身有边框更好）
+*/
+
+/* 为了使表格外边框和圆角效果与内部单元格边框完美融合，
+   并且因为我们已经在 table 上设置了 `overflow: hidden` 和 `border-radius`，
+   单元格的边框会被裁剪，所以我们不需要特别为角单元格调整 `border-radius`。
+   我们只需要确保内部边框不要与外部边框重叠得太难看。
+*/
+
+/* 针对 Org-mode 的对齐类 */
+table .org-left {
+    text-align: left;
+}
+
+table .org-right {
+    text-align: right;
+}
+
+table .org-center {
+    /* 如果有 org-center 类 */
+    text-align: center;
+}
+
+/* 表格内脚注链接的样式 (如果需要) */
+table sup.footref a {
+    color: var(--table-default-text-color); /* 或特定链接颜色 */
+    text-decoration: none;
+    font-weight: normal; /* 确保脚注标记不加粗 */
+}
+
+table sup.footref a:hover {
+    text-decoration: underline;
+}
+
+/* 清理colgroup的默认边框（如果浏览器会渲染它们且与设计冲突） */
+table colgroup col {
+    border: none; /* colgroup 通常不直接显示边框，但以防万一 */
+}
+
+tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+tr:nth-child(odd) {
+    background: #ffffff;
+}

@@ -1,0 +1,19 @@
+---
+layout: base-layout.njk
+---
+
+{% include 'header.njk' %}
+
+<div class="index-container">
+  <!-- Latest Posts Section -->
+  {% set postList = collections.posts | reverse %} {% set allSize = postList |
+  length %} {% set postList = postList.slice(0, project.indexPostSize) %} {% set
+  indexPostSize = postList | length %} {% include 'post-cards.njk' %}
+
+  <!-- Show More Link -->
+  <div>
+    <a class="read-more-btn more-posts" href="/archive">See more posts »</a>
+  </div>
+</div>
+
+{% include 'footer.njk' %}

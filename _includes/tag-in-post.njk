@@ -1,0 +1,16 @@
+{% set currentPost = collections.posts | getCollectionItem %} {% set tagsList =
+currentPost.data.tags %}
+
+<center>
+  <div>
+    <div class="categories">
+      {% for tag in tagsList %}
+      <div class="category-item">
+        <a href="/archive/?tag={{tag}}">
+          <label for="{{tag}}" class="custom-label"> #{{ tag }} </label>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</center>

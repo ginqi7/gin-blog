@@ -1,0 +1,51 @@
+:root {
+    --color-text: #444;
+    --color-background: #fff;
+    --color-heading: #222;
+    --color-link: #3273dc;
+    --color-code-bg: #f2f2f2;
+    --color-helptext: #777;
+    --color-error: #eba613;
+    --color-visited-link: #8b6fcb;
+    --color-underline: #000;
+}
+/* Typography */
+body {
+    color: var(--color-text);
+    background-color: var(--color-background);
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+b,
+pre code,
+blockquote,
+.header-title {
+    color: var(--color-heading);
+}
+a {
+    color: var(--color-link);
+}
+code {
+    background-color: var(--color-code-bg);
+}
+.helptext {
+    color: var(--color-helptext);
+}
+.errorlist {
+    color: var(--color-error);
+}
+.underline,
+b {
+    color: var(--color-underline);
+}
+/* Layout */
+.category-item a {
+    color: var(--color-text);
+}
+.blog-posts a:visited {
+    color: var(--color-visited-link);
+}

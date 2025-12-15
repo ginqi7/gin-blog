@@ -1,0 +1,12 @@
+---
+layout: base-layout.njk
+---
+
+{% include 'header.njk' %}
+
+<article>
+    <h1 class="title"> {{title}} </h1>
+    {{ content | linkify | douban_card | bilibili_card | safe }}
+</article>
+
+{% include 'footer.njk' %}

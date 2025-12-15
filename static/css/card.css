@@ -1,0 +1,112 @@
+.cards-container {
+  /* background-color: #f9f9f9; */
+  display: flex;
+  justify-content: center;
+  padding: 50px;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* --- 卡片核心样式 --- */
+.post-card {
+  background: #fff;
+  width: 100%;
+  /* max-width: 700px; /\* 限制最大宽度 *\/ */
+  padding: 18px; /* 内部大留白，参考图片 */
+
+  /* 边框和阴影 */
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04); /* 非常柔和的扩散阴影 */
+
+  /* 布局与对齐 */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 让子元素水平居中 */
+  box-sizing: border-box;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* 鼠标悬停时的微动效（可选） */
+.post-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* --- 日期样式 --- */
+.card-date {
+  font-size: 0.9rem;
+  color: #6b7280; /* 中灰色 */
+  margin-bottom: 12px;
+  font-weight: 400;
+}
+
+/* --- 标题样式 --- */
+.card-title {
+  /* margin: 0 0 24px 0; /\* 下方留出空间 *\/ */
+  line-height: 1.3;
+  text-align: center; /* 标题居中 */
+}
+
+.card-tag a {
+  font-size: 0.9rem;
+  color: #6b7280; /* 中灰色 */
+  text-decoration: none; /* 移除下划线 */
+}
+
+.card-title a {
+  text-decoration: none;
+  color: #1f2937; /* 深黑色 */
+  font-size: 1.75rem;
+  font-weight: 800; /* 加粗 */
+  transition: color 0.2s;
+}
+
+.card-title a:hover {
+  color: #3b82f6; /* 悬停变色 */
+}
+
+.card-tag a:hover {
+  color: #3b82f6; /* 悬停变色 */
+}
+
+/* --- 摘要样式 --- */
+.card-summary {
+  font-size: 1.05rem;
+  color: #374151; /* 深灰色，保证阅读对比度 */
+  line-height: 1.7; /* 增加行高，提升可读性 */
+  margin-bottom: 32px;
+
+  /* 关键点：虽然卡片居中，但正文通常左对齐更易阅读 */
+  text-align: left;
+
+  /* 可选：如果你希望像图片那样文字末尾出现省略号 */
+  /* 这是一个多行省略的黑科技 */
+  display: -webkit-box;
+  -webkit-line-clamp: 4; /* 限制显示4行 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* --- 按钮样式 --- */
+.read-more-btn {
+  display: inline-block;
+  padding: 8px 24px;
+  background-color: transparent;
+  border: 1px solid #d1d5db; /* 浅灰边框 */
+  border-radius: 9999px; /* 药丸形状 */
+
+  text-decoration: none;
+  color: #4b5563;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.read-more-btn:hover {
+  border-color: #9ca3af;
+  color: #111827;
+  background-color: #f3f4f6;
+}

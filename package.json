@@ -1,0 +1,19 @@
+{
+    "type": "module",
+    "scripts": {
+        "build": "npx @11ty/eleventy"
+    },
+    "devDependencies": {
+        "clean-css": "^5.3.3"
+    },
+    "dependencies": {
+        "@11ty/eleventy-plugin-rss": "^2.0.3",
+        "cheerio": "^1.1.2",
+        "fontmin": "^1.1.0",
+        "html-bilibili-card": "^0.0.2",
+        "html-douban-card": "^0.0.2",
+        "linkify-html": "^4.2.0",
+        "linkifyjs": "^4.2.0",
+        "node-pandoc": "^0.3.0"
+    }
+}

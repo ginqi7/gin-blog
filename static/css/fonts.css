@@ -1,0 +1,38 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+@import url("https://fonts.googleapis.com/css?family=Alkatra&text=Hello%20World&display=swap");
+@font-face {
+  font-family: jinkaiFont;
+  src: url("../fonts/zh/jinkai.ttf") format("TrueType");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: monaco;
+  src: url("../fonts/en/monaco.ttf") format("TrueType");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: alegreya;
+  src: url("../fonts/en/Alegreya-Regular.ttf") format("TrueType");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: moniker;
+  src: url("../fonts/en/Moniker-Regular.ttf") format("TrueType");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: moniker-medium;
+  src: url("../fonts/en/Moniker-Medium.woff") format("TrueType");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: ReallySansLarge;
+  src: url("../fonts/en/ReallySansSmallStudent-Bold.woff") format("TrueType");
+  font-display: swap;
+}

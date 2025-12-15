@@ -1,0 +1,14 @@
+---
+layout: base-layout.njk
+---
+
+{% include 'header.njk' %}
+<link rel="stylesheet" type="text/css" href="/static/css/article.css" defer />
+<article>
+  <h1 class="title">{{title}}</h1>
+  {%include 'tag-in-post.njk'%} {{ content | safe }}
+</article>
+
+<div class="post-line"></div>
+
+{% include 'previous-next.njk' %} {% include 'footer.njk' %}

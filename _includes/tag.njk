@@ -1,0 +1,9 @@
+{% for tag in tagsList %}
+<div class="category-item">
+  <input type="checkbox" class="hidden-checkbox" id="{{tag}}" value = "{{tag}}" >
+  </input>
+  <label for="{{tag}}" class="custom-label">
+    #{{ tag }}
+  </label>
+</div>
+{% endfor %}

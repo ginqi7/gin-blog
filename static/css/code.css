@@ -1,0 +1,166 @@
+/* 基础变量 (推荐，方便统一调整) */
+:root {
+    --org-src-container-border-color: #444; /* 边框颜色 */
+    --org-src-container-border-radius: 8px; /* 圆角大小 */
+    --org-src-container-margin: 1.5em 0; /* 上下外边距 */
+    --org-src-header-height: 2.8em; /* 模拟头部的高度 */
+    --org-src-header-padding: 0.6em 1em; /* 模拟头部的内边距 */
+    --org-src-header-bg: #eee8d5; /* 模拟头部的背景色 */
+    --org-src-header-text-color: #444; /* 模拟头部的文字颜色 */
+    --org-src-pre-padding: 1em; /* pre 标签的内边距 */
+    --org-src-font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo,
+        Courier, monospace;
+    --org-src-font-size: 0.9em;
+    --org-src-line-height: 1.5;
+    --org-src-default-text-color: #2d2d2d; /* pre 中未被span覆盖的文字颜色 */
+    --org-src-max-height-collapsed: 20em; /* "折叠"状态的最大高度 (约13-14行) */
+}
+
+/* 代码块容器 */
+/* pre */
+pre {
+    border: 1px solid var(--org-src-container-border-color);
+    border-radius: var(--org-src-container-border-radius);
+    margin: var(--org-src-container-margin);
+    position: relative; /* 为伪元素定位提供基准 */
+    padding-top: var(
+        --org-src-header-height
+    ); /* 为::before, ::after创建的“头部”留出空间 */
+    padding-left: var(--org-src-pre-padding);
+    padding-right: var(--org-src-pre-padding);
+    padding-bottom: var(--org-src-pre-padding);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25); /* 可选：添加一点阴影 */
+    overflow: hidden; /* 确保内部所有内容都受圆角限制 */
+    /* 重要：你HTML中的<pre>标签有 src 和具体语言的class，如 src-emacs-lisp */
+    margin: 0 !important; /* 覆盖可能存在的用户代理样式或外部样式 */
+    background-color: transparent; /* 让 pre 的背景色透出来 */
+    color: var(--org-src-default-text-color); /* 设置默认代码颜色 */
+    font-family: var(--org-src-font-family);
+    font-size: var(--org-src-font-size);
+    line-height: var(--org-src-line-height);
+    overflow-x: auto; /* 长代码行水平滚动 */
+    /* white-space: pre; /\* 保持 pre 标签的特性 *\/ */
+
+    /* --- 实现自动换行的关键属性 --- */
+    white-space: pre-wrap; /* 允许在空白符处换行，并保留所有空白 */
+    overflow-wrap: break-word; /* 对于超长且无空格的单词，允许在单词内部断开 */
+    /* ------------------------------ */
+
+    /* "折叠" 功能：默认限制最大高度，超出则垂直滚动 */
+    max-height: var(--org-src-max-height-collapsed);
+    overflow-y: auto; /* 如果内容超出max-height，则显示垂直滚动条 */
+    transition: max-height 0.35s ease-in-out; /* 为展开添加平滑过渡 */
+
+    /* 确保pre的底部圆角（因为头部占用了顶部空间和圆角） */
+    border-bottom-left-radius: var(--org-src-container-border-radius);
+    border-bottom-right-radius: var(--org-src-container-border-radius);
+}
+
+/* 使用 ::before 和 ::after 创建模拟的头部区域和按钮 */
+pre::before,
+pre::after {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    height: var(--org-src-header-height);
+    line-height: var(--org-src-header-height); /* 简易垂直居中文本 */
+    padding: 0 var(--org-src-header-padding); /* 只需左右内边距，上下由line-height处理 */
+    background-color: var(--org-src-header-bg);
+    color: var(--org-src-header-text-color);
+    font-size: 0.85em; /* 头部文字稍小一些 */
+    font-family: sans-serif; /* 头部按钮使用无衬线字体 */
+    display: block;
+    border-bottom: 1px solid var(--org-src-container-border-color); /* 头部与代码区的分隔线 */
+}
+
+/* 左侧：显示代码语言 */
+
+pre::before {
+    content: "Code"; /* 默认显示 "Code" */
+    left: 0;
+    font-weight: bold;
+    text-transform: capitalize; /* 语言首字母大写 */
+    border-top-left-radius: var(
+        --org-src-container-border-radius
+    ); /* 左上圆角 */
+    /* 右边框可以模拟分隔，但如果和复制按钮背景色一样，可能不需要 */
+    /* border-right: 1px solid var(--org-src-container-border-color); */
+}
+
+/* 右侧：模拟“复制代码”按钮 (注意：纯CSS无法实现复制功能) */
+
+pre::after {
+    content: "Copy"; /* 按钮文字 */
+    right: 0;
+    cursor: pointer; /* 提示用户这是可点击的（尽管它没有实际功能） */
+    text-align: center;
+    border-top-right-radius: var(
+        --org-src-container-border-radius
+    ); /* 右上圆角 */
+    min-width: 60px; /* 给按钮一个最小宽度 */
+    transition: background-color 0.2s ease;
+}
+
+pre::after:hover {
+    background-color: #4f4f4f; /* 鼠标悬停时改变背景色 */
+}
+
+/* 通过 :has() 伪类 (现代浏览器支持) 根据 pre 的 class 显示具体语言 */
+/* 需要你根据实际可能出现的语言添加更多规则 */
+pre.example::before {
+    content: "Example";
+}
+
+pre:has(pre.src-emacs-lisp)::before {
+    content: "Emacs Lisp";
+}
+pre:has(pre.src-javascript)::before {
+    content: "JavaScript";
+}
+pre:has(pre.src-python)::before {
+    content: "Python";
+}
+pre:has(pre.src-java)::before {
+    content: "Java";
+}
+pre:has(pre.src-csharp)::before {
+    content: "C#";
+}
+pre:has(pre.src-html)::before {
+    content: "HTML";
+}
+pre:has(pre.src-css)::before {
+    content: "CSS";
+}
+pre:has(pre.src-sh)::before {
+    content: "Shell";
+}
+pre:has(pre.src-shell)::before {
+    content: "Shell";
+}
+pre:has(pre.src-text)::before {
+    content: "Text";
+}
+
+pre:has(pre.src-json)::before {
+    content: "Json";
+}
+
+/* ... 其他语言 */
+
+/* "展开" 功能：当鼠标悬停在整个代码块容器上时，展开 pre 区域 */
+pre:hover {
+    max-height: 80vh; /* 或者一个足够大的固定值，如 1000px，允许显示更多内容 */
+    /* 使用 vh 可以使其适应视口高度 */
+}
+
+/* HTML 中内联的 span 样式（如 color, background-color）会覆盖这里的样式。
+   我们不需要重新定义这些高亮颜色，而是确保 pre 的基础样式和容器样式。
+   如果你的 org-mode 导出没有给某些 token（如普通文本）上色，
+   它们会继承 pre.src 或 pre 的 color。
+*/
+pre span {
+    /* 可以为所有 span 设置一些通用属性，但颜色相关的会被内联样式覆盖 */
+    line-height: inherit; /* 确保 span 不会破坏行高 */
+    /* background-color: transparent !important; */ /* 如果想强制去除所有span的背景色，但不推荐 */
+}

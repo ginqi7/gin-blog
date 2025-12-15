@@ -1,0 +1,184 @@
+:root {
+  --color-primary: #482936;
+  --color-gray: #777;
+  --color-gray-20: rgba(0, 0, 0, 0.2);
+  --font-family-primary:
+    alegreya, jinkaiFont, Georgia, Cambria, "Times New Roman", serif;
+  --font-family-secondary: "Alkatra", serif;
+  --font-family-medium:
+    moniker-medium, jinkaiFont, Georgia, Cambria, "Times New Roman", serif;
+  --font-family-title: "ReallySansLarge", jinkaiFont, serif;
+  --font-weight-title-bold: 700;
+  --color-text-shadow: rgba(0, 0, 0, 0.15); /* 示例：更柔和的阴影颜色 */
+  --header-title-size-default: 2.5rem;
+  --header-title-size-medium: 3rem;
+  --header-title-size-large: 3.5rem;
+}
+
+html {
+  /* Make the element's width and height include padding and border,
+       rather than adding them outside,
+       for more intuitive layout calculations. */
+  box-sizing: border-box;
+  /* (commonly 16px) */
+  font-size: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 0 auto; /* 更明确垂直边距为0，水平自动 */
+  padding: 1.25rem; /* 使用 rem (假设 1rem = 16px, 20/16 = 1.25) */
+  max-width: 55rem; /* 使用 rem (720px / 16px = 45rem) */
+  font-family: var(--font-family-primary);
+  font-size: 1.1875rem; /* 使用 rem (19px / 16px = 1.1875) */
+  line-height: 1.6; /* 保持无单位行高 */
+  background-color: var(--color-background, white); /* 建议显式设置背景色 */
+  color: var(--color-text, #333); /* 建议显式设置默认文本颜色 */
+  overflow-wrap: break-word; /* 的作用是允许在单词内部进行换行，以防止长单词或 URL 溢出其容器。 */
+}
+
+/* Header */
+.header-title {
+  font-family: var(--font-family-secondary);
+  /* font-size: 3rem; */
+  font-weight: var(--font-weight-title-bold);
+  text-decoration: none;
+  /* text-shadow: var(--color-text-shadow) 4px 4px 4px #aaa; */
+  font-size: var(--header-title-size-large);
+  text-shadow: 3px 3px 5px var(--color-text-shadow);
+}
+
+.header-line {
+  width: 100%;
+  margin-top: 2rem;
+  border-width: 2px;
+  border-style: solid none none none;
+  border-color: var(--color-primary);
+}
+
+#preamble {
+  position: relative;
+}
+
+/* Headline */
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-family-title);
+}
+
+.page-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 保持，首尾元素靠两边 */
+}
+
+/* categories */
+.categories {
+  display: inline-flex; /* 容器本身行内流动，内部弹性布局 */
+  gap: 0.5rem; /* 推荐使用 gap 来控制 flex */
+}
+
+.category-item a {
+  text-decoration: none;
+}
+
+.category-item {
+  display: flex; /* 使自身成为flex容器，用于其内部内容的对齐 */
+  align-items: center; /* 垂直居中内部内容 */
+  justify-content: center; /* 水平居中内部内容 */
+  border: #000 1px solid;
+  border-radius: 3px;
+  padding: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.page-item .categories .category-item {
+  padding: 0.2rem;
+  font-size: 0.7rem;
+}
+
+li {
+  margin: 0.4rem 0;
+}
+
+img {
+  width: 100%;
+}
+
+.figure {
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+pre {
+  width: 100%;
+}
+
+.footer-line {
+  width: 100%;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-width: 2px;
+  border-style: solid none none none;
+  border-color: var(--color-primary);
+}
+
+footer {
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.hidden-checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+}
+
+.hidden-checkbox:checked + .custom-label {
+  color: white;
+  background-color: green;
+}
+
+/* Label 的基础样式 */
+.custom-label {
+  display: inline-block;
+  cursor: pointer; /* 让鼠标变成小手 */
+  user-select: none; /* 防止双击选中文本 */
+}
+
+.item-left {
+  display: flex;
+  flex-direction: row;
+  gap: 3em;
+}
+
+.title-item {
+  display: inline;
+}
+
+.date-item {
+  font-family: "Roboto";
+}
+
+.index-container {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.more-posts {
+  border-color: #111827;
+}

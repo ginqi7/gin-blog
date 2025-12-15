@@ -1,0 +1,22 @@
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    .header-title {
+        font-size: 2rem;
+    }
+    .category-item {
+        font-size: 0.7rem;
+    }
+    h1.title {
+        font-size: 1.2em;
+    }
+    .side-note {
+        display: none;
+    }
+
+    #table-of-contents {
+        display: none;
+    }
+}

@@ -1,0 +1,85 @@
+/* Nav */
+
+/* Header */
+
+.nav__toggle,
+.nav-active-checkbox {
+    display: none;
+}
+
+header .nav {
+    display: flex; /* 容器本身行内流动，内部弹性布局 */
+    position: absolute;
+    gap: 1rem;
+    right: 0; /* 距离父容器右边框0像素 */
+}
+
+.image-container {
+    display: flex; /* 将容器设为 flex 容器 */
+    align-items: center; /* 垂直居中所有 flex 子项 */
+    gap: 0.5; /* 可选：在图片和文字之间添加一些间距 */
+}
+
+header .nav span,
+header .image-container a {
+    text-decoration: none;
+    font-family: var(--font-family-medium);
+    color: var(--color-text);
+}
+
+/* Footer */
+
+footer .nav {
+    display: inline-flex;
+    gap: 1rem;
+    text-align: center;
+}
+
+footer img {
+    width: 16px;
+    height: 16px;
+}
+
+footer .image-container a {
+    text-decoration: none;
+    font-size: 0.7rem;
+    color: var(--color-text);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header .nav__toggle {
+        display: inline;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    header .nav > .image-container {
+        display: none;
+    }
+
+    header .nav__toggle {
+        cursor: pointer;
+        display: inline-block;
+        user-select: none;
+    }
+
+    .nav:has(.nav-active-checkbox:checked) {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.4em;
+        position: relative;
+        right: auto;
+        padding-top: 2rem;
+        padding-left: 5rem;
+    }
+
+    .nav-active-checkbox:checked ~ .image-container {
+        display: flex;
+        gap: 0;
+    }
+    .nav-active-checkbox:checked ~ .image-container img {
+        display: none;
+    }
+}

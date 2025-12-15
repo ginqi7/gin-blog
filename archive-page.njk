@@ -1,0 +1,15 @@
+---
+permalink: "/archive/"
+layout: archive-layout.njk
+---
+
+<!-- Categories Section -->
+<h1>Categories</h1>
+<div class="categories">
+  {% set tagsList = collections.tagsList %} {% include 'tag.njk' %}
+</div>
+
+<div id="content" class="content">
+  <h1 class="title">Archive</h1>
+  {% set postList = collections.posts | reverse %} {% include 'post-list.njk' %}
+</div>
