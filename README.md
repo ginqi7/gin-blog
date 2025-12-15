@@ -41,3 +41,53 @@ Or build and host on a local development server:
 ```
 npx @11ty/eleventy --serve
 ```
+
+## Docker
+
+By utilizing the Docker image, you can write books without needing the gin-blog directory.
+
+### Build
+
+```
+ git clone https://github.com/ginqi7/gin-blog.git gin-blog
+ cd gin-blog
+ docker build -t gin-blog .
+```
+
+### Start Serve
+
+In your books directory:
+
+```
+docker run -p 8080:8080 -v $(pwd):/app/posts gin-blog
+```
+
+### Start export
+
+In your books directory:
+
+```
+docker run -v $(pwd):/app/posts -v $(pwd)/_site:/app/_site gin-blog npx eleventy
+```
+
+### Utilizing the Docker Image in GHCR.
+
+In your books directory:
+
+```
+docker run -p 8080:8080 -v $(pwd):/app/posts  ghcr.io/ginqi7/gin-blog
+```
+
+or
+
+```
+docker run -v $(pwd):/app/posts -v $(pwd)/_site:/app/_site  ghcr.io/ginqi7/gin-blog npx eleventy
+```
+
+## Github Page
+
+You can easily publish your books on GitHub Pages:
+
+1. Create a repository that contains your books written in Markdown files.
+2. Create a GitHub Action to build the website (similar to [this](https://github.com/ginqi7/blog/blob/main/.github/workflows/publish.yml)).
+3. Every time you push your books to the master branch, it will deploy a GitHub page. You can refer to [my books repository](https://github.com/ginqi7/blog).
