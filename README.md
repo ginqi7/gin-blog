@@ -44,7 +44,7 @@ npx @11ty/eleventy --serve
 
 ## Docker
 
-By utilizing the Docker image, you can write books without needing the gin-blog directory.
+By utilizing the Docker image, you can write blog without needing the gin-blog directory.
 
 ### Build
 
@@ -56,7 +56,7 @@ By utilizing the Docker image, you can write books without needing the gin-blog 
 
 ### Start Serve
 
-In your books directory:
+In your blog directory:
 
 ```
 docker run -p 8080:8080 -v $(pwd):/app/posts gin-blog
@@ -64,7 +64,7 @@ docker run -p 8080:8080 -v $(pwd):/app/posts gin-blog
 
 ### Start export
 
-In your books directory:
+In your blog directory:
 
 ```
 docker run -v $(pwd):/app/posts -v $(pwd)/_site:/app/_site gin-blog npx eleventy
@@ -72,7 +72,7 @@ docker run -v $(pwd):/app/posts -v $(pwd)/_site:/app/_site gin-blog npx eleventy
 
 ### Utilizing the Docker Image in GHCR.
 
-In your books directory:
+In your blog directory:
 
 ```
 docker run -p 8080:8080 -v $(pwd):/app/posts  ghcr.io/ginqi7/gin-blog
@@ -86,8 +86,8 @@ docker run -v $(pwd):/app/posts -v $(pwd)/_site:/app/_site  ghcr.io/ginqi7/gin-b
 
 ## Github Page
 
-You can easily publish your books on GitHub Pages:
+You can easily publish your blog on GitHub Pages:
 
-1. Create a repository that contains your books written in Markdown files.
+1. Create a repository that contains your blog written in Markdown files.
 2. Create a GitHub Action to build the website (similar to [this](https://github.com/ginqi7/blog/blob/main/.github/workflows/publish.yml)).
-3. Every time you push your books to the master branch, it will deploy a GitHub page. You can refer to [my books repository](https://github.com/ginqi7/blog).
+3. Every time you push your blog to the master branch, it will deploy a GitHub page. You can refer to [my blog repository](https://github.com/ginqi7/blog).
