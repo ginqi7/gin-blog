@@ -3,10 +3,10 @@
   <div class="nav">
     {% for nav in navs %} {% if nav.position == 'footer' %}
     <div class="image-container">
-      <a href="{{ nav.href }}" class="{{ nav.type }}">
-        <img width="24" height="24" src="{{ nav.src }}" alt="{{ nav.type }}" />
+      <a href=".{{ nav.href }}" class="{{ nav.type }}">
+        <img width="24" height="24" src=".{{ nav.src }}" alt="{{ nav.type }}" />
       </a>
-      <a href="{{ nav.href }}" class="image-text"> {{nav.show}} </a>
+      <a href=".{{ nav.href }}" class="image-text"> {{nav.show}} </a>
     </div>
     {% endif %} {% endfor %}
   </div>

@@ -1,5 +1,5 @@
 ---
-permalink: "/archive/"
+permalink: "./archive/"
 layout: archive-layout.njk
 ---
 
@@ -13,3 +13,5 @@ layout: archive-layout.njk
   <h1 class="title">Archive</h1>
   {% set postList = collections.posts | reverse %} {% include 'post-list.njk' %}
 </div>
+
+<script type="text/javascript" src="{{ './static/js/core.js' | version }}" />
