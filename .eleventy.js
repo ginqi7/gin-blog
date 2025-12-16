@@ -24,6 +24,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("static/svg/*");
   eleventyConfig.addPassthroughCopy("static/js/*");
   eleventyConfig.addPassthroughCopy("static/css/*");
+  eleventyConfig.addPassthroughCopy({"posts/images/" : "images"});
 
   eleventyConfig.addPlugin(pluginOrgMode);
   eleventyConfig.addPlugin(pluginDateFormat);
