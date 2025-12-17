@@ -37,6 +37,8 @@ function addOrgFormat(eleventyConfig) {
               data["date"] = val.split(" ")[0].replace(/<|>/g, "");
             } else if (key == "filetags") {
               data["tags"] = val;
+            } else if (key == "export_file_name") {
+              data["permalink"] = val+"/";
             } else {
               data[key] = val;
             }
