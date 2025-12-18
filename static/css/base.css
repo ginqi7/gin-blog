@@ -81,8 +81,17 @@ h3 {
 
 /* categories */
 .categories {
-  display: inline-flex; /* 容器本身行内流动，内部弹性布局 */
-  gap: 0.5rem; /* 推荐使用 gap 来控制 flex */
+  min-width: 10rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));
+  gap: 0.5rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .categories {
+    grid-template-columns: repeat(auto-fill, minmax(3rem, 1fr));
+  }
 }
 
 .category-item a {
@@ -98,6 +107,10 @@ h3 {
   padding: 0.3rem;
   font-size: 0.8rem;
   font-weight: bold;
+}
+
+.page-item .categories {
+  justify-content: right;
 }
 
 .page-item .categories .category-item {
@@ -162,15 +175,14 @@ footer {
 .item-left {
   display: flex;
   flex-direction: row;
-  gap: 3em;
-}
-
-.title-item {
-  display: inline;
 }
 
 .date-item {
-  font-family: "Roboto";
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  flex-basis: 5em;
+  min-width: 5em;
+  flex-shrink: 0;
 }
 
 .index-container {
@@ -181,4 +193,10 @@ footer {
 
 .more-posts {
   border-color: #111827;
+}
+
+@media (max-width: 768px) {
+  .page-item .categories {
+    display: none;
+  }
 }
