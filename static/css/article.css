@@ -86,6 +86,13 @@ ol.org-ol {
 .post-nav-item + .post-nav-item {
   margin-top: 0.35rem;
 }
+/* ← 和 → 的字形宽度不一定完全相同，给个固定 1em 的盒子居中放，
+   两行标题的左边缘才会严格对齐。 */
+.post-nav-arrow {
+  display: inline-block;
+  width: 1em;
+  text-align: center;
+}
 
 body {
   counter-reset: section;

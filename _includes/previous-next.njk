@@ -1,18 +1,29 @@
 {# 上一篇 / 下一篇。
    原来这里直接输出两个裸 <li>，外面没有任何 <ul>/<ol>，只是靠浏览器对 li 的
    list-item 默认值才显示出来——渲染成两个带圆点、紧贴虚线的列表项，看着像没写完。
-   换成真正的 <nav>，样式在 article.css 的 .post-nav 里。 #}
+   换成真正的 <nav>，样式在 article.css 的 .post-nav 里。
+
+   href 上的前导点是全站统一写法，配合 base-layout.njk 里的 <base href="/">，
+   解析结果和 /xxx/ 完全一样，别去掉。
+
+   箭头代替 "Previous:" / "Next:"：两个词宽度不同，会把两行标题推到不同的
+   起始位置。箭头固定 1em 宽（.post-nav-arrow），两行标题左边缘对齐。
+   方向信息交给 aria-label，箭头本身是装饰所以 aria-hidden。 #}
 {% set prePost = collections.posts | getPreviousCollectionItem %} {% set nextPost =
 collections.posts | getNextCollectionItem %}
 
 <nav class="post-nav" aria-label="Post navigation">
   {% if prePost %}
   <div class="post-nav-item">
-    Previous: <a href=".{{ prePost.url }}">{{ prePost.data.title }}</a>
+    <a href=".{{ prePost.url }}" aria-label="Previous: {{ prePost.data.title }}">
+      <span class="post-nav-arrow" aria-hidden="true">←</span> {{ prePost.data.title }}
+    </a>
   </div>
   {% endif %} {% if nextPost %}
   <div class="post-nav-item">
-    Next: <a href=".{{ nextPost.url }}">{{ nextPost.data.title }}</a>
+    <a href=".{{ nextPost.url }}" aria-label="Next: {{ nextPost.data.title }}">
+      <span class="post-nav-arrow" aria-hidden="true">→</span> {{ nextPost.data.title }}
+    </a>
   </div>
   {% endif %}
 </nav>
