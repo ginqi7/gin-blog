@@ -3,7 +3,14 @@
     --color-background: #fff;
     --color-heading: #222;
     --color-link: #3273dc;
-    --color-code-bg: #f2f2f2;
+    /* 行内代码：淡紫底 + 暗紫字。
+       前景 #5b3691 比 --color-visited-link (#8b6fcb) 深得多（两色 RGB 距离 94，
+       不是一个观感），不会被当成已访问链接。
+       底色 #efe7f9 的相对亮度是 0.82，落在"看得出是块"和"抢眼"之间；
+       原来的 #f2f2f2 是 0.89，浅到几乎看不出边界，跟偏重的字色配一起就发闷。
+       字/底对比度 7.34:1，过 AA。 */
+    --color-code-bg: #efe7f9; /* 原 #f2f2f2 */
+    --color-code-text: #5b3691; /* 原 #444 */
     --color-tag-selected-bg: #eaf1fb;
     --color-helptext: #777;
     --color-error: #eba613;
@@ -32,6 +39,21 @@ a {
 }
 code {
     background-color: var(--color-code-bg);
+    color: var(--color-code-text);
+    /* 原来的底色是直接贴着字形的，两端顶到笔画，看着像字后面糊了块脏东西。
+       纵向只给 0.08em：行内盒的上下 padding 不参与行高计算，给多了会跟
+       上下两行的底色叠在一起。 */
+    padding: 0.08em 0.3em;
+    border-radius: 3px;
+    /* 上面那组 `pre code` 特异性是 (0,0,2)，比这条的 (0,0,1) 高，
+       所以代码块里的文字不受影响，仍旧走 --color-heading。 */
+}
+
+/* 链接里的行内代码保留链接色。
+   以前 code 没有 color 声明，<a><code> 里的文字是跟着 <a> 走的链接蓝；
+   上面一加 color 就会把它抢成那支暗紫，链接就看不出来能点了。 */
+a code {
+    color: inherit;
 }
 .helptext {
     color: var(--color-helptext);

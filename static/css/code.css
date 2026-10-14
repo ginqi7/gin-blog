@@ -4,7 +4,7 @@
     --org-src-container-border-radius: 8px; /* 圆角大小 */
     --org-src-container-margin: 1.5em 0; /* 上下外边距 */
     --org-src-header-height: 2.8em; /* 模拟头部的高度 */
-    --org-src-header-padding: 0.6em 1em; /* 模拟头部的内边距 */
+    --org-src-header-padding: 1em; /* 头部的左右内边距（只用于左右） */
     --org-src-header-bg: #eee8d5; /* 模拟头部的背景色 */
     --org-src-header-text-color: #444; /* 模拟头部的文字颜色 */
     --org-src-pre-padding: 1em; /* pre 标签的内边距 */
@@ -16,52 +16,55 @@
     --org-src-max-height-collapsed: 20em; /* "折叠"状态的最大高度 (约13-14行) */
 }
 
-/* 代码块容器 */
-/* pre */
+/* 代码块容器。
+   pandoc 输出的是 <div.sourceCode><pre class="sourceCode 语言">，core.js 会给
+   没有这层 wrapper 的裸 <pre>（pandoc 对 text / example / elisp 这类不加高亮
+   包装的语言就直接给 <pre class="text">）补上一个。语言标签、复制按钮、底部
+   渐隐都以这层 wrapper 为定位基准——它不是滚动容器，而 <pre> 是。 */
+div.sourceCode {
+    position: relative;
+}
+
 pre {
     border: 1px solid var(--org-src-container-border-color);
     border-radius: var(--org-src-container-border-radius);
-    margin: var(--org-src-container-margin);
-    position: relative; /* 为伪元素定位提供基准 */
-    padding-top: var(
-        --org-src-header-height
-    ); /* 为::before, ::after创建的“头部”留出空间 */
+    position: relative; /* pre::before 那个语言标签的定位基准 */
+    padding-top: var(--org-src-header-height); /* 给左上角的语言标签留出位置 */
     padding-left: var(--org-src-pre-padding);
     padding-right: var(--org-src-pre-padding);
     padding-bottom: var(--org-src-pre-padding);
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25); /* 可选：添加一点阴影 */
-    overflow: hidden; /* 确保内部所有内容都受圆角限制 */
-    /* 重要：你HTML中的<pre>标签有 src 和具体语言的class，如 src-emacs-lisp */
-    margin: 0 !important; /* 覆盖可能存在的用户代理样式或外部样式 */
+    margin: 0; /* 覆盖 UA 默认的 1em；原来的 margin: var(...) 紧跟 margin: 0 !important 是自相矛盾的 */
     background-color: transparent; /* 让 pre 的背景色透出来 */
     color: var(--org-src-default-text-color); /* 设置默认代码颜色 */
     font-family: var(--org-src-font-family);
     font-size: var(--org-src-font-size);
     line-height: var(--org-src-line-height);
-    overflow-x: auto; /* 长代码行水平滚动 */
-    /* white-space: pre; /\* 保持 pre 标签的特性 *\/ */
 
     /* --- 实现自动换行的关键属性 --- */
     white-space: pre-wrap; /* 允许在空白符处换行，并保留所有空白 */
     overflow-wrap: break-word; /* 对于超长且无空格的单词，允许在单词内部断开 */
+    /* 长行折行而不是横向滚动，所以下面可以放心地 overflow: hidden */
     /* ------------------------------ */
 
-    /* "折叠" 功能：默认限制最大高度，超出则垂直滚动 */
+    /* "折叠"：超过这个高度就裁掉，鼠标移上去展开（展开规则见文件末尾）。
+       这里裁掉而不是给内部滚动条：悬停本来就会展开，那条滚动条永远用不到，
+       却会在右侧压出一道槽。底部的渐隐（.code-fade）负责提示"下面还有"。 */
     max-height: var(--org-src-max-height-collapsed);
-    overflow-y: auto; /* 如果内容超出max-height，则显示垂直滚动条 */
+    overflow: hidden;
     transition: max-height 0.35s ease-in-out; /* 为展开添加平滑过渡 */
-
-    /* 确保pre的底部圆角（因为头部占用了顶部空间和圆角） */
-    border-bottom-left-radius: var(--org-src-container-border-radius);
-    border-bottom-right-radius: var(--org-src-container-border-radius);
 }
 
-/* 使用 ::before 和 ::after 创建模拟的头部区域和按钮 */
-pre::before,
-pre::after {
+/* 左上角：代码语言标签。
+   以前这里是 pre::before / pre::after 一对伪元素，::after 兼做"复制"按钮——
+   但伪元素收不到点击事件，所以那个 Copy 从来就点不动，只是个画上去的样子。
+   现在 ::after 不再使用，复制按钮是 core.js 注入的真实 <button>。 */
+pre::before {
+    content: "Code"; /* 默认值，下面按语言覆盖 */
     box-sizing: border-box;
     position: absolute;
     top: 0;
+    left: 0;
     height: var(--org-src-header-height);
     line-height: var(--org-src-header-height); /* 简易垂直居中文本 */
     padding: 0 var(--org-src-header-padding); /* 只需左右内边距，上下由line-height处理 */
@@ -69,98 +72,256 @@ pre::after {
     color: var(--org-src-header-text-color);
     font-size: 0.85em; /* 头部文字稍小一些 */
     font-family: sans-serif; /* 头部按钮使用无衬线字体 */
+    font-weight: bold;
     display: block;
     border-bottom: 1px solid var(--org-src-container-border-color); /* 头部与代码区的分隔线 */
+    border-top-left-radius: var(--org-src-container-border-radius); /* 左上圆角 */
 }
 
-/* 左侧：显示代码语言 */
-
-pre::before {
-    content: "Code"; /* 默认显示 "Code" */
-    left: 0;
-    font-weight: bold;
-    text-transform: capitalize; /* 语言首字母大写 */
-    border-top-left-radius: var(
-        --org-src-container-border-radius
-    ); /* 左上圆角 */
-    /* 右边框可以模拟分隔，但如果和复制按钮背景色一样，可能不需要 */
-    /* border-right: 1px solid var(--org-src-container-border-color); */
-}
-
-/* 右侧：模拟“复制代码”按钮 (注意：纯CSS无法实现复制功能) */
-
-pre::after {
-    content: "Copy"; /* 按钮文字 */
-    right: 0;
-    cursor: pointer; /* 提示用户这是可点击的（尽管它没有实际功能） */
-    text-align: center;
-    border-top-right-radius: var(
-        --org-src-container-border-radius
-    ); /* 右上圆角 */
+/* 右上角：复制按钮的样式。节点由 core.js 注入，这里只管长什么样。
+   放在 div.sourceCode 上而不是 <pre> 里：<pre> 是滚动容器，绝对定位的子节点
+   会跟着内容一起滚走，长代码块往下一滚按钮就不见了。 */
+.code-copy {
+    position: absolute;
+    top: 1px; /* 1px = <pre> 的边框，落到边框内侧，跟语言标签同一条水平线 */
+    right: 1px;
+    box-sizing: border-box;
+    height: var(--org-src-header-height);
+    line-height: var(--org-src-header-height);
+    padding: 0 var(--org-src-header-padding);
     min-width: 60px; /* 给按钮一个最小宽度 */
+    border: 0;
+    border-bottom: 1px solid var(--org-src-container-border-color);
+    border-top-right-radius: var(--org-src-container-border-radius); /* 右上圆角 */
+    background-color: var(--org-src-header-bg);
+    color: var(--org-src-header-text-color);
+    font-size: 0.85em;
+    font-family: sans-serif;
+    text-align: center;
+    cursor: pointer;
     transition: background-color 0.2s ease;
 }
 
-pre::after:hover {
-    background-color: #4f4f4f; /* 鼠标悬停时改变背景色 */
+.code-copy:hover {
+    /* 原来这里是 #4f4f4f——深色主题的残留，压在米色表头上是一片突兀的深灰 */
+    background-color: #e0d8c0;
 }
 
-/* 通过 :has() 伪类 (现代浏览器支持) 根据 pre 的 class 显示具体语言 */
-/* 需要你根据实际可能出现的语言添加更多规则 */
+.code-copy:active {
+    background-color: #d6ccb0;
+}
+
+.code-copy:focus-visible {
+    outline: 2px solid var(--color-link, #3273dc);
+    outline-offset: -2px;
+}
+
+/* 复制成功/失败后按钮上短暂显示的反馈文字 */
+.code-copy.is-done {
+    color: #1f6b4a; /* 在 #eee8d5 上 5.26:1 */
+}
+
+.code-copy.is-failed {
+    color: #a3341f;
+}
+
+/* 底部渐隐：内容被 max-height 裁掉时提示"下面还有"。平时不加，
+   由 core.js 量出真的溢出才给 <pre> 加 .is-clipped，所以短代码块上不会出现。 */
+.code-fade {
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    bottom: 1px;
+    height: 3.5em;
+    pointer-events: none; /* 只是个视觉提示，不要挡住选代码 */
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0),
+        var(--color-background, #fff)
+    );
+    border-bottom-left-radius: var(--org-src-container-border-radius);
+    border-bottom-right-radius: var(--org-src-container-border-radius);
+}
+
+div.sourceCode:has(pre.is-clipped) .code-fade {
+    opacity: 1;
+}
+
+/* 鼠标移上去 <pre> 就展开了，渐隐要跟着消失 */
+div.sourceCode:has(pre:hover) .code-fade {
+    opacity: 0;
+}
+
+/* ── 语言标签：把 org 里写的语言名翻译成左上角显示的文字 ──────────────
+   类名是 pandoc 的 skylighting 给的，不一定等于 org 里写的名字。多数语言两边
+   同名（python / css / rust…），照类名匹配即可；只有极少数是别名，见下。
+   漏掉的语言会落回 pre::before 的默认值 "Code"，不会变成空白。
+   （原来这批规则写的是 pre:has(pre.src-emacs-lisp)，但 pandoc 根本不输出
+   src-* 这类类名，所以全部恒不匹配，一律显示 "Code"。） */
+
+/* 别名：org 里写 emacs-lisp，pandoc 按 commonlisp 高亮，<pre> 的类名已经变成
+   commonlisp，从它身上取不回原名——原语言名只留在外层 div 的
+   data-org-language 属性上。这条特异性 (0,2,2) 高于下面按类名的 (0,2,1)，
+   所以能压过 "Common Lisp" 那条，写出真正的 Emacs Lisp 时仍显示 Common Lisp。
+   （sh → bash、js → javascript 也是别名，但两种写法的标签文字一样，
+   用类名那条就够了，不必再从属性上取。） */
+div.sourceCode[data-org-language="emacs-lisp"] pre::before {
+    content: "Emacs Lisp";
+}
+
+pre.sourceCode.commonlisp::before {
+    content: "Common Lisp";
+}
+pre.sourceCode.bash::before {
+    content: "Shell";
+}
+pre.sourceCode.zsh::before {
+    content: "Zsh";
+}
+pre.sourceCode.python::before {
+    content: "Python";
+}
+pre.sourceCode.javascript::before {
+    content: "JavaScript";
+}
+pre.sourceCode.typescript::before {
+    content: "TypeScript";
+}
+pre.sourceCode.c::before {
+    content: "C";
+}
+pre.sourceCode.cpp::before {
+    content: "C++";
+}
+pre.sourceCode.csharp::before {
+    content: "C#";
+}
+pre.sourceCode.java::before {
+    content: "Java";
+}
+pre.sourceCode.go::before {
+    content: "Go";
+}
+pre.sourceCode.rust::before {
+    content: "Rust";
+}
+pre.sourceCode.ruby::before {
+    content: "Ruby";
+}
+pre.sourceCode.sql::before {
+    content: "SQL";
+}
+pre.sourceCode.html::before {
+    content: "HTML";
+}
+pre.sourceCode.css::before {
+    content: "CSS";
+}
+pre.sourceCode.scss::before {
+    content: "SCSS";
+}
+pre.sourceCode.json::before {
+    content: "JSON";
+}
+pre.sourceCode.yaml::before {
+    content: "YAML";
+}
+pre.sourceCode.toml::before {
+    content: "TOML";
+}
+pre.sourceCode.diff::before {
+    content: "Diff";
+}
+pre.sourceCode.org::before {
+    content: "Org";
+}
+
+/* 这几个 pandoc 不认得（skylighting 没有对应高亮），所以不加高亮包装，
+   输出的是裸 <pre class="elisp">。core.js 给它们补的 wrapper 是空
+   class="sourceCode"，没有 data-org-language，只能按 <pre> 自己的类名匹配。 */
+pre.elisp::before {
+    content: "Emacs Lisp";
+}
+pre.shell::before {
+    content: "Shell";
+}
+pre.text::before {
+    content: "Text";
+}
 pre.example::before {
     content: "Example";
 }
 
-pre:has(pre.src-emacs-lisp)::before {
-    content: "Emacs Lisp";
-}
-pre:has(pre.src-javascript)::before {
-    content: "JavaScript";
-}
-pre:has(pre.src-python)::before {
-    content: "Python";
-}
-pre:has(pre.src-java)::before {
-    content: "Java";
-}
-pre:has(pre.src-csharp)::before {
-    content: "C#";
-}
-pre:has(pre.src-html)::before {
-    content: "HTML";
-}
-pre:has(pre.src-css)::before {
-    content: "CSS";
-}
-pre:has(pre.src-sh)::before {
-    content: "Shell";
-}
-pre:has(pre.src-shell)::before {
-    content: "Shell";
-}
-pre:has(pre.src-text)::before {
-    content: "Text";
-}
-
-pre:has(pre.src-json)::before {
-    content: "Json";
-}
-
-/* ... 其他语言 */
-
-/* "展开" 功能：当鼠标悬停在整个代码块容器上时，展开 pre 区域 */
+/* ── "展开"：鼠标悬停时从 20em 的折叠高度放到 80vh ────────────── */
 pre:hover {
-    max-height: 80vh; /* 或者一个足够大的固定值，如 1000px，允许显示更多内容 */
-    /* 使用 vh 可以使其适应视口高度 */
+    max-height: 80vh; /* 用 vh 可以使其适应视口高度 */
+    /* 展开后如果仍然超过 80vh，此时才需要内部滚动 */
+    overflow-y: auto;
 }
 
-/* HTML 中内联的 span 样式（如 color, background-color）会覆盖这里的样式。
-   我们不需要重新定义这些高亮颜色，而是确保 pre 的基础样式和容器样式。
-   如果你的 org-mode 导出没有给某些 token（如普通文本）上色，
-   它们会继承 pre.src 或 pre 的 color。
-*/
-pre span {
-    /* 可以为所有 span 设置一些通用属性，但颜色相关的会被内联样式覆盖 */
-    line-height: inherit; /* 确保 span 不会破坏行高 */
-    /* background-color: transparent !important; */ /* 如果想强制去除所有span的背景色，但不推荐 */
+/* 块级代码的 <code> 不要行内代码那套底色和内边距。
+   colors.css 里的 `code { ... }` 是给行内代码用的，但它同样命中 pre > code。
+   底色的问题是：<code> 是行内元素，底色只铺在文字本身、不铺满整行宽度，
+   短行的右边会露出白色，看上去就是文字后面贴了一条参差的色带。
+   padding 的问题是：它会把代码整体往右推 0.3em，跟左上角的语言标签错开。 */
+pre code {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
 }
+
+pre span {
+    line-height: inherit; /* 确保 span 不会破坏行高 */
+}
+
+/* 语法高亮。
+   这一段以前是空的，且注释假设「Emacs ox-html 会把颜色写成 span 的内联 style」。
+   但这个站点的代码块走 plugins/org-mode.js 里的 pandoc，pandoc 只输出
+   <span class="kw"> 这样的类名、不带颜色，所以此前所有 token 都是同一色。
+   类名来自 pandoc 的 skylighting 高亮器，下面覆盖了它全部 30 个 token 类型；
+   万一漏了哪个，会继承 colors.css 给 `pre code` 的 #222，是安全的兜底。
+   四组色相 + 灰，全部在 #fff 上达到 WCAG AA 4.5:1。 */
+
+/* 蓝 — 关键字、类型、导入 */
+.kw { color: #2f5fa8; } /* Keyword */
+.dt { color: #2f5fa8; } /* DataType */
+.cf { color: #2f5fa8; } /* ControlFlow */
+.im { color: #2f5fa8; } /* Import */
+.ex { color: #2f5fa8; } /* Extension */
+
+/* 绿 — 字符串、内建 */
+.st { color: #2e7d5b; } /* String */
+.ss { color: #2e7d5b; } /* SpecialString（如 f-string 的字面部分）*/
+.vs { color: #2e7d5b; } /* VerbatimString */
+.bu { color: #2e7d5b; } /* BuiltIn */
+
+/* 紫 — 函数名 */
+.fu { color: #7048a8; } /* Function */
+
+/* 橙 — 数字、常量、属性、特殊字符 */
+.dv { color: #a35a1f; } /* DecVal */
+.bn { color: #a35a1f; } /* BaseN */
+.fl { color: #a35a1f; } /* Float */
+.ch { color: #a35a1f; } /* Char */
+.cn { color: #a35a1f; } /* Constant */
+.at { color: #a35a1f; } /* Attribute */
+.sc { color: #a35a1f; } /* SpecialChar（如 f-string 的 {} ）*/
+
+/* 红 — 告警 */
+.al { color: #b3261e; } /* Alert */
+.wa { color: #b3261e; } /* Warning */
+.er { color: #b3261e; } /* Error */
+
+/* 灰 — 次要信息 */
+.co { color: #6b7884; } /* Comment */
+.cv { color: #6b7884; } /* CommentVar */
+.do { color: #6b7884; } /* Documentation */
+.an { color: #6b7884; } /* Annotation */
+.in { color: #6b7884; } /* Information */
+.re { color: #6b7884; } /* Region */
+.pp { color: #6b7884; } /* Preprocessor */
+.op { color: #5a5a5a; } /* Operator */
+.ot { color: #5a5a5a; } /* Other */
+.va { color: #3f4a55; } /* Variable */
