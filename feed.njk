@@ -26,22 +26,30 @@ eleventyImport:
     前面多一个换行 xmllint 就报 "XML declaration allowed only at the start of the document"。
     所以这几个标签全部带上 - 做白空格剪切。 #}
 {%- set limit = 20 -%}
-{%- set feedUrl = "/feed.xml" | htmlBaseUrl(project.siteURL) -%}
+{#- feedBase 走 feedBaseURL 过滤器而不是直接读 project.siteURL：
+    缺 siteURL 时会告警并退到 baseURL，而不是静默产出相对地址。 #}
+{%- set feedBase = project | feedBaseURL -%}
+{#- 站点可能部署在子路径下（project.baseURL，如 "/zh-blog/"）。相对地址是按 <base>
+    解析的，所以正文里 "./images/x.png" 的实际位置是 baseURL 下，不是站点根。
+    这里把 baseURL 当作"页面路径"传给 transformWithHtmlBase，让它按同样的规则解析。
+    直接传 post.url 会错：那等于假设每篇文章的图片都在它自己的目录下。 #}
+{%- set pageContext = project.baseURL or "/" -%}
+{%- set feedUrl = "/feed.xml" | feedAbsoluteUrl(feedBase) -%}
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>{{ project.title }}</title>
-    <link>{{ project.siteURL }}</link>
+    <link>{{ feedBase }}</link>
     <atom:link href="{{ feedUrl }}" rel="self" type="application/rss+xml" />
     <description>This is a blog for {{ project.author }}.</description>
     <language>zh-CN</language>
     {%- for post in collections.posts | reverse %}
     {%- if loop.index <= limit %}
-    {%- set absolutePostUrl = post.url | htmlBaseUrl(project.siteURL) %}
+    {%- set absolutePostUrl = post.url | feedAbsoluteUrl(feedBase) %}
     <item>
       <title>{{ post.data.title }}</title>
       <link>{{ absolutePostUrl }}</link>
-      <description>{{ post.content | transformWithHtmlBase(project.siteURL, "/") }}</description>
+      <description>{{ post.content | transformWithHtmlBase(feedBase, pageContext) }}</description>
       <pubDate>{{ post.date | dateToRfc822 }}</pubDate>
       <dc:creator>{{ project.author }}</dc:creator>
       <guid>{{ absolutePostUrl }}</guid>

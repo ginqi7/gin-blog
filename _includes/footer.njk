@@ -1,7 +1,29 @@
+{#
+  navs 来自 _data/navs.js，但内容仓库部署时是这么跑的：
+
+    docker run -v $(pwd):/app/posts -v $(pwd)/_data:/app/_data ... ghcr.io/ginqi7/gin-blog npx eleventy
+
+  第二条把容器里整个 /app/_data 换成内容仓库那一份，而内容仓库（blog、zh-blog）
+  的 _data 里只有 project.js —— 镜像自带的 navs.js 被一起盖掉，navs 成了 undefined，
+  页脚三个图标整体消失。footer-line 和版权用的是 project.*，不受影响，
+  所以现场看起来只是"nav 空了"。
+
+  所以默认值放在模板里，只在 navs 未定义时启用。没放回 _data/navs.js 是因为那份会被
+  挂载覆盖，放那儿等于没放；而放在模板里还有个好处：这里读到的是运行时合并后的
+  project（内容仓库那份的 github/mail），写在 _data/navs.js 里的静态默认值读不到。
+
+  内容仓库想自定义导航，加一个 _data/navs.js 覆盖即可，那条路径照旧。
+#}
+{% set navList = navs | default([
+  { type: "github", src: "/static/svg/github.svg", href: project.github, show: "(Github)", position: "footer" },
+  { type: "email", src: "/static/svg/mail.svg", href: "mailto:" + project.mail, show: "(Email)", position: "footer" },
+  { type: "rss", src: "/static/svg/rss.svg", href: "/feed.xml", show: "(RSS)", position: "footer" }
+], true) %}
+
 <footer>
   <div class="footer-line"></div>
   <div class="nav">
-    {% for nav in navs %} {% if nav.position == 'footer' %}
+    {% for nav in navList %} {% if nav.position == 'footer' %}
     <div class="image-container">
       {# 图标和文字合成一个链接。原来是两个指向同一 href 的 <a>，屏幕阅读器会把
          同一个目标念两遍；而且 nav.css 里 .image-container 的 gap 写成了 0.5
