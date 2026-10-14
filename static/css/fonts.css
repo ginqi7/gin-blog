@@ -1,7 +1,13 @@
-/* Chinese. Alegreya has no CJK glyphs, so per-glyph fallback lands here. */
+/* Chinese. Alegreya has no CJK glyphs, so per-glyph fallback lands here.
+   The source jinkai.ttf is 3.91 MB and is NOT served. A build-time subset is:
+   plugins/subset-font.js reads every character out of the rendered _site HTML and
+   runs fontmin over the source, emitting static/fonts/zh/jinkai.woff2 (~312 KB,
+   ~1340 glyphs). Regenerated on every build, so new posts can never outrun it —
+   unlike Alegreya below, whose character range is a design decision rather than a
+   function of the content. */
 @font-face {
   font-family: jinkaiFont;
-  src: url("../fonts/zh/jinkai.ttf") format("TrueType");
+  src: url("../fonts/zh/jinkai.woff2") format("woff2");
   font-display: swap;
 }
 
