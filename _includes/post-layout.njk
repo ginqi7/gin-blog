@@ -11,7 +11,7 @@ layout: base-layout.njk
 />
 <article>
   <h1 class="title">{{title}}</h1>
-  {%include 'tag-in-post.njk'%} {{ content | douban_card | bilibili_card | safe }}
+  {%include 'tag-in-post.njk'%} {{ content | safe }}
 </article>
 
 <div class="post-line"></div>
