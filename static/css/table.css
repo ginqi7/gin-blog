@@ -16,9 +16,8 @@
     );
 
     /* 表格特有的样式变量 */
-    --table-font-family: system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
-        "Helvetica Neue", sans-serif; /* 表格内容通常用无衬线字体更易读 */
+    /* 与正文同一套字体（Alegreya + jinkaiFont），保持一致 */
+    --table-font-family: var(--font-family-primary);
     --table-header-bg: #3a3a3a; /* 表头背景，可以和 pre 的头部类似 */
     --table-header-text-color: #e0e0e0; /* 表头文字颜色 */
     --table-cell-padding: 0.6em 0.8em; /* 单元格内边距，覆盖 cellpadding="6" */

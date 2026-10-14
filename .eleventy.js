@@ -3,6 +3,7 @@ import path from "path";
 import Fontmin from "fontmin";
 import CleanCSS from "clean-css";
 import linkifyHtml from "linkify-html";
+import * as cheerio from "cheerio";
 import replaceDoubanUrls from "html-douban-card";
 import replaceBilibiliUrls from "html-bilibili-card";
 import { feedPlugin } from "@11ty/eleventy-plugin-rss";
@@ -15,6 +16,21 @@ function allLinks(data) {
     console.log(item.url);
     return `'${item.url}'`;
   });
+}
+
+// html-douban-card / html-bilibili-card run `cheerio.load(html)` and return
+// `$.html()`, which serialises a complete <html><head><body> document. Piping
+// that into a layout nests a second document inside the page, so unwrap it back
+// to a fragment. Any <style> the helper appended to its synthetic <head> is kept
+// and prepended, since dropping it would lose the card styling.
+function asFragment(html) {
+  const $ = cheerio.load(html);
+  const body = $("body").html() ?? html;
+  const styles = $("head style")
+    .map((_, el) => $.html(el))
+    .get()
+    .join("");
+  return styles + body;
 }
 
 export default function (eleventyConfig) {
@@ -53,11 +69,11 @@ export default function (eleventyConfig) {
   });
 
   eleventyConfig.addFilter("douban_card", async function (content) {
-    return await replaceDoubanUrls(content);
+    return asFragment(await replaceDoubanUrls(content));
   });
 
   eleventyConfig.addFilter("bilibili_card", async function (content) {
-    return await replaceBilibiliUrls(content);
+    return asFragment(await replaceBilibiliUrls(content));
   });
 
   // minify css

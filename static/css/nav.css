@@ -24,6 +24,8 @@ header .nav span,
 header .image-container a {
     text-decoration: none;
     font-family: var(--font-family-medium);
+    /* Alegreya is variable, so keep the medium weight the old Moniker-Medium had. */
+    font-weight: 500;
     color: var(--color-text);
 }
 

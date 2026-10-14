@@ -2,13 +2,15 @@
   --color-primary: #482936;
   --color-gray: #777;
   --color-gray-20: rgba(0, 0, 0, 0.2);
+  /* Alegreya is the single English face; jinkaiFont covers Chinese. */
   --font-family-primary:
     alegreya, jinkaiFont, Georgia, Cambria, "Times New Roman", serif;
-  --font-family-secondary: "Alkatra", serif;
-  --font-family-medium:
-    moniker-medium, jinkaiFont, Georgia, Cambria, "Times New Roman", serif;
-  --font-family-title: "ReallySansLarge", jinkaiFont, serif;
+  --font-family-secondary: alegreya, jinkaiFont, serif;
+  --font-family-medium: alegreya, jinkaiFont, Georgia, Cambria,
+    "Times New Roman", serif;
+  --font-family-title: alegreya, jinkaiFont, serif;
   --font-weight-title-bold: 700;
+  --font-weight-h1-title: 600;
   --color-text-shadow: rgba(0, 0, 0, 0.15); /* 示例：更柔和的阴影颜色 */
   --header-title-size-default: 2.5rem;
   --header-title-size-medium: 3rem;
@@ -32,33 +34,33 @@ html {
 
 body {
   margin: 0 auto; /* 更明确垂直边距为0，水平自动 */
+  background-color: var(--color-background, white); /* 建议显式设置背景色 */
   padding: 1.25rem; /* 使用 rem (假设 1rem = 16px, 20/16 = 1.25) */
   max-width: 55rem; /* 使用 rem (720px / 16px = 45rem) */
-  font-family: var(--font-family-primary);
+  color: var(--color-text, #333); /* 建议显式设置默认文本颜色 */
   font-size: 1.1875rem; /* 使用 rem (19px / 16px = 1.1875) */
   line-height: 1.6; /* 保持无单位行高 */
-  background-color: var(--color-background, white); /* 建议显式设置背景色 */
-  color: var(--color-text, #333); /* 建议显式设置默认文本颜色 */
+  font-family: var(--font-family-primary);
   overflow-wrap: break-word; /* 的作用是允许在单词内部进行换行，以防止长单词或 URL 溢出其容器。 */
 }
 
 /* Header */
 .header-title {
-  font-family: var(--font-family-secondary);
   /* font-size: 3rem; */
   font-weight: var(--font-weight-title-bold);
-  text-decoration: none;
   /* text-shadow: var(--color-text-shadow) 4px 4px 4px #aaa; */
   font-size: var(--header-title-size-large);
+  font-family: var(--font-family-secondary);
+  text-decoration: none;
   text-shadow: 3px 3px 5px var(--color-text-shadow);
 }
 
 .header-line {
-  width: 100%;
   margin-top: 2rem;
   border-width: 2px;
   border-style: solid none none none;
   border-color: var(--color-primary);
+  width: 100%;
 }
 
 #preamble {
@@ -73,19 +75,25 @@ h3 {
   font-family: var(--font-family-title);
 }
 
+/* Lives here rather than in article.css: article.css is only linked from
+   post-layout.njk, but the archive page renders <h1 class="title"> too. */
+h1.title {
+  font-weight: var(--font-weight-h1-title);
+}
+
 .page-item {
   display: flex;
-  align-items: center;
   justify-content: space-between; /* 保持，首尾元素靠两边 */
+  align-items: center;
 }
 
 /* categories */
 .categories {
-  min-width: 10rem;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));
-  gap: 0.5rem;
   align-items: center;
+  gap: 0.5rem;
+  min-width: 10rem;
 }
 
 @media (max-width: 768px) {
@@ -100,13 +108,13 @@ h3 {
 
 .category-item {
   display: flex; /* 使自身成为flex容器，用于其内部内容的对齐 */
-  align-items: center; /* 垂直居中内部内容 */
   justify-content: center; /* 水平居中内部内容 */
+  align-items: center; /* 垂直居中内部内容 */
   border: #000 1px solid;
   border-radius: 3px;
   padding: 0.3rem;
-  font-size: 0.8rem;
   font-weight: bold;
+  font-size: 0.8rem;
 }
 
 .page-item .categories {
@@ -136,12 +144,12 @@ pre {
 }
 
 .footer-line {
-  width: 100%;
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
   border-width: 2px;
   border-style: solid none none none;
   border-color: var(--color-primary);
+  width: 100%;
 }
 
 footer {
@@ -155,14 +163,14 @@ footer {
 .hidden-checkbox {
   position: absolute;
   opacity: 0;
+  margin: 0;
   width: 0;
   height: 0;
-  margin: 0;
 }
 
 .hidden-checkbox:checked + .custom-label {
-  color: white;
   background-color: green;
+  color: white;
 }
 
 /* Label 的基础样式 */
@@ -178,11 +186,11 @@ footer {
 }
 
 .date-item {
-  font-feature-settings: "tnum";
-  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
   flex-basis: 5em;
   min-width: 5em;
-  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
 
 .index-container {
