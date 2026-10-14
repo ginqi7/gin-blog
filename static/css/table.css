@@ -20,6 +20,9 @@
     --table-font-family: var(--font-family-primary);
     --table-header-bg: #3a3a3a; /* 表头背景，可以和 pre 的头部类似 */
     --table-header-text-color: #e0e0e0; /* 表头文字颜色 */
+    /* 表头链接色。正文用的 --color-link (#3273dc) 压在深色表头上只有
+       2.50:1，低于 WCAG AA 的 4.5:1；这一档是 4.72:1。 */
+    --table-header-link-color: #6ea8ff;
     --table-cell-padding: 0.6em 0.8em; /* 单元格内边距，覆盖 cellpadding="6" */
     --table-internal-border-color: #555; /* 表格内部线条颜色 */
     --table-font-size: 0.9em; /* 表格字体大小 */
@@ -55,6 +58,11 @@ table thead th {
     /* text-align 由 .org-left/right 等 class 控制，但可以设一个默认值 */
     text-align: left;
     border-bottom: 2px solid var(--table-container-border-color); /* 表头和表体之间的强调分隔线 */
+}
+
+/* 表头里的链接（如浏览器名）。深色底上不能用正文那支蓝。 */
+table thead th a {
+    color: var(--table-header-link-color);
 }
 
 /* 所有单元格 (th, td) 的通用样式 */
@@ -113,4 +121,15 @@ tr:nth-child(even) {
 
 tr:nth-child(odd) {
     background: #ffffff;
+}
+
+/* 打印/导出 PDF 时，把链接目标跟在文字后面。
+   屏幕上不显示，所以不影响阅读；只为拿到"URL 可见"这一个好处，
+   避免为此在表头挂脚注上标。 */
+@media print {
+    table thead th a[href]::after {
+        content: " (" attr(href) ")";
+        font-weight: normal;
+        font-size: 0.8em;
+    }
 }
