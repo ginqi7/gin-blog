@@ -2,7 +2,14 @@
   /* background-color: #f9f9f9; */
   display: flex;
   justify-content: center;
-  padding: 5%;
+  /* 原来是 padding: 5%。横向那部分按 840px 的正文列再缩 42px，于是首页卡片只有
+     756px，比 header 那条分隔线（840px）窄一圈，也比文章页的正文列窄——
+     同一个站上出现了三种内容宽度。所以横向必须收掉。
+     纵向那部分不能一起收：header 分隔线到首卡、末卡到 "See more posts" 的间距
+     全靠它，归零会贴成一条线。也不能写死 rem，百分比是按容器宽度算的，
+     桌面 840px 得 42px、手机 350px 只有 17.5px，写死 2.625rem 等于把手机上的
+     间距撑大三倍。保留百分比、只收横向。 */
+  padding: 5% 0;
   flex-direction: column;
   gap: 20px;
 }
@@ -79,6 +86,10 @@
   line-height: 1.7; /* 增加行高，提升可读性 */
   margin-bottom: 32px;
 
+  /* 不要加 align-self: stretch。.post-card 是 align-items: center 的纵向 flex，
+     日期/标题/标签/按钮都居中，摘要靠这条规则跟着居中成一整块。
+     一旦撑满，摘要盒子永远等于卡片内宽（802px），短摘要的文字只占左边一截，
+     右边空一片，跟上下居中的元素对不齐——比字数长短不齐更难看。 */
   /* 关键点：虽然卡片居中，但正文通常左对齐更易阅读 */
   text-align: left;
 

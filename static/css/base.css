@@ -36,7 +36,7 @@ body {
   margin: 0 auto; /* 更明确垂直边距为0，水平自动 */
   background-color: var(--color-background, white); /* 建议显式设置背景色 */
   padding: 1.25rem; /* 使用 rem (假设 1rem = 16px, 20/16 = 1.25) */
-  max-width: 55rem; /* 使用 rem (720px / 16px = 45rem) */
+  max-width: 55rem; /* 880px。正文列 = 880 - 2×1.25rem 内边距 = 840px */
   color: var(--color-text, #333); /* 建议显式设置默认文本颜色 */
   /* 18px (18/16 = 1.125)。中英文共用这一个字号，靠 font-family 逐字符回退
      区分：汉字走 jinkaiFont，拉丁走 alegreya。17–18px 是两个字体舒适区的交集
@@ -145,15 +145,20 @@ h1.title {
 
 .page-item .categories .category-item {
   padding: 0.2rem;
-  font-size: 0.7rem;
+  font-size: 0.8rem; /* 原 0.7rem = 11.2px，偏小 */
 }
 
 li {
   margin: 0.4rem 0;
 }
 
+/* 原来是 width: 100%，等于强制所有图片铺满容器——比容器窄的截图会被硬拉大
+   （dictionary-overlay 里那张 627px 宽的图被拉到 756px，糊了）。
+   改成 max-width：大图缩、小图保持原尺寸。footer 的图标有自己更具体的规则，
+   不受影响。 */
 img {
-  width: 100%;
+  max-width: 100%;
+  height: auto;
 }
 
 .figure {
@@ -193,11 +198,14 @@ footer {
 /* 选中态：淡蓝底 + 链接色边框/文字，跟 --color-link 同一色系。
    原来的 green/white 在这套近乎灰度的配色里太跳。
    填充落在 .category-item 而不是 <label>：边框和内边距在父级，
-   只给 label 上色的话淡蓝会缩在文字那一小块里。 */
+   只给 label 上色的话淡蓝会缩在文字那一小块里。
+   文字用 --color-link-on-tint 而不是 --color-link：标签只有 0.8rem 且不算大字，
+   要 4.5:1，而 #3273dc 压在 #eaf1fb 上只有 4.00:1。边框不参与对比度判定，
+   但一起换掉免得蓝得不一致。 */
 .category-item:has(.hidden-checkbox:checked) {
   background-color: var(--color-tag-selected-bg);
-  color: var(--color-link);
-  border-color: var(--color-link);
+  color: var(--color-link-on-tint);
+  border-color: var(--color-link-on-tint);
 }
 
 /* Label 的基础样式 */

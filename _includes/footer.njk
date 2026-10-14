@@ -3,10 +3,13 @@
   <div class="nav">
     {% for nav in navs %} {% if nav.position == 'footer' %}
     <div class="image-container">
+      {# 图标和文字合成一个链接。原来是两个指向同一 href 的 <a>，屏幕阅读器会把
+         同一个目标念两遍；而且 nav.css 里 .image-container 的 gap 写成了 0.5
+         （漏了单位，是无效声明），图标和文字本来就贴在一起。 #}
       <a href="{{ nav.href }}" class="{{ nav.type }}">
-        <img width="24" height="24" src="{{ nav.src }}" alt="{{ nav.type }}" />
+        <img width="24" height="24" src="{{ nav.src }}" alt="" />
+        <span class="image-text">{{ nav.show }}</span>
       </a>
-      <a href="{{ nav.href }}" class="image-text"> {{nav.show}} </a>
     </div>
     {% endif %} {% endfor %}
   </div>

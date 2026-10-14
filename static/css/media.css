@@ -7,7 +7,7 @@
         font-size: 2rem;
     }
     .category-item {
-        font-size: 0.7rem;
+        font-size: 0.8rem; /* 原 0.7rem = 11.2px，本来就小，手机上还更难点 */
     }
     h1.title {
         font-size: 1.2em;

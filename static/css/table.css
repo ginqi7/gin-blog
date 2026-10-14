@@ -2,7 +2,10 @@
 /* 假设这些 :root 变量已从 pre 样式中定义，或者我们在这里重新定义/适配它们 */
 :root {
     /* 从 pre 代码块样式中借鉴或适配的变量 */
-    --table-container-bg: var(--org-src-container-bg, #2d2d2d);
+    /* 原来引的是 --org-src-container-bg，但那个变量从来没定义过（code.css 里只有
+       border-color / border-radius / margin 三支），于是静默落到深色兜底 #2d2d2d。
+       现在行背景由斑马纹盖住了看不见，但只要哪天有行没上色，就会是深底深字。 */
+    --table-container-bg: var(--color-background, #fff);
     --table-container-border-color: var(--org-src-container-border-color, #444);
     --table-container-border-radius: var(
         --org-src-container-border-radius,
@@ -23,6 +26,10 @@
     /* 表头链接色。正文用的 --color-link (#3273dc) 压在深色表头上只有
        2.50:1，低于 WCAG AA 的 4.5:1；这一档是 4.72:1。 */
     --table-header-link-color: #6ea8ff;
+    /* 表体里的链接。正文那支 --color-link (#3273dc) 压在偶数行的 #f9f9f9 上
+       只有 4.32:1，差一点够不着 AA；表内的脚注上标也是同一个问题。
+       colors.css 的 --color-link-on-tint 在 #f9f9f9 上是 5.39:1。 */
+    --table-link-color: var(--color-link-on-tint, #2c63c4);
     --table-cell-padding: 0.6em 0.8em; /* 单元格内边距，覆盖 cellpadding="6" */
     --table-internal-border-color: #555; /* 表格内部线条颜色 */
     --table-font-size: 0.9em; /* 表格字体大小 */
@@ -63,6 +70,12 @@ table thead th {
 /* 表头里的链接（如浏览器名）。深色底上不能用正文那支蓝。 */
 table thead th a {
     color: var(--table-header-link-color);
+}
+
+/* 表体里的链接，包括表内的脚注上标。
+   选择器只到 td，压不过上面那条 thead th（特异性更高），表头不受影响。 */
+table td a {
+    color: var(--table-link-color);
 }
 
 /* 所有单元格 (th, td) 的通用样式 */
@@ -131,5 +144,19 @@ tr:nth-child(odd) {
         content: " (" attr(href) ")";
         font-weight: normal;
         font-size: 0.8em;
+    }
+}
+
+/* 窄屏：6 列的表格在 390px 里根本塞不下。
+   实测 /posts/20251218-MacOS软件/ 的表格 min-content 宽度是 393px，比视口还宽，
+   把布局视口整个顶到 404px；同时第一列被压缩成一字一行（"可配置 tab" 竖排成 4 行）。
+   这里把 table 自身变成横向滚动容器：它本来是 overflow: hidden（为了圆角），
+   换成 overflow-x: auto 之后圆角照样裁，多出来的宽度改成可以横向拖。
+   （单元格里的换行不会因此变好，但至少不用把整个页面缩放变小。） */
+@media (max-width: 768px) {
+    table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }

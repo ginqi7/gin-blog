@@ -1,9 +1,17 @@
+{# id 必须全页唯一。
+   archive 页上筛选器渲染一组、每篇帖子各自的标签再渲染一组，同一个标签名会出现
+   好几次（#macos 在那一页出现过 5 次，#emacs 3 次）。以前 id 直接就是标签名，
+   重复 id 让 <label for> 永远只指得到第一个，HTML 也不合法。
+   前缀由调用方给：筛选器用 "filter"，post-list 里逐篇用 "p1"/"p2"…
+   （core.js 是按 value 找复选框的，不看 id，所以行为不变。） #}
 {% for tag in tagsList %}
 <div class="category-item">
-  <input type="checkbox" class="hidden-checkbox" id="{{tag}}" value = "{{tag}}" >
-  </input>
-  <label for="{{tag}}" class="custom-label">
-    #{{ tag }}
-  </label>
+  <input
+    type="checkbox"
+    class="hidden-checkbox"
+    id="{{ tagScope }}{{ tag }}"
+    value="{{ tag }}"
+  />
+  <label for="{{ tagScope }}{{ tag }}" class="custom-label"> #{{ tag }} </label>
 </div>
 {% endfor %}

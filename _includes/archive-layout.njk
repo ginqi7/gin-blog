@@ -5,7 +5,9 @@ layout: base-layout.njk
 {% include 'header.njk' %}
 
 <article>
-    <h1 class="title"> {{title}} </h1>
+    {# archive-page.njk 的 frontmatter 没有 title，这里以前会渲染出一个空的
+       <h1 class="title">  </h1>，在 header 分隔线和 "Categories" 之间留一段空白。 #}
+    {% if title %}<h1 class="title">{{ title }}</h1>{% endif %}
     {{ content | linkify | safe }}
 </article>
 

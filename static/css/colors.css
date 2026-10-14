@@ -14,8 +14,26 @@
     --color-tag-selected-bg: #eaf1fb;
     --color-helptext: #777;
     --color-error: #eba613;
-    --color-visited-link: #8b6fcb;
+    /* 已访问链接。原 #8b6fcb 在白底上只有 4.01:1，低于 AA。这支是 5.18:1，
+       色相没动，只是压深了一档。
+       （目前 .blog-posts 这个类名在模板里已经不存在，所以这条规则是空转的；
+       留着是为了别再踩回原来那个值。） */
+    --color-visited-link: #7a5cb8;
     --color-underline: #000;
+    /* 引用块。article.css 原来在这儿写死 #999999，白底上只有 2.85:1——
+       正文里最需要读清楚的一段反而最淡。#555 是 7.46:1，
+       比正文 (#444) 浅一档，仍然看得出是"引来的话"。 */
+    --color-blockquote: #555;
+    /* org 的 /强调/。article.css 故意不用斜体（楷体做假斜体很丑），
+       靠颜色区分，但原来的 #999999 只有 2.85:1。#666 是 5.74:1。 */
+    --color-emphasis: #666;
+    /* 压在"有色底"上的链接色。
+       #3273dc 在白底上是 4.67:1，本来就没有余量，一旦底不是纯白就掉线：
+       表格偶数行的 #f9f9f9 上只剩 4.32:1，选中的标签底 #eaf1fb 上只剩 4.00:1。
+       这支在白底 5.69:1、#f9f9f9 上 5.39:1、#eaf1fb 上 5.01:1，三处都过。
+       （不直接把 --color-link 改深，是因为正常链接那 4.67:1 是够的，
+       没必要连带改掉全站的链接色。） */
+    --color-link-on-tint: #2c63c4;
 }
 /* Typography */
 body {
@@ -30,9 +48,14 @@ h5,
 h6,
 b,
 pre code,
-blockquote,
 .header-title {
     color: var(--color-heading);
+}
+/* 引用块单独一支色，不再跟着标题走：它比正文轻、比原来的 #999 重。
+   写在这里而不是 article.css，是因为 article.css 是从 <body> 里链进来的，
+   加载顺序在所有 <head> 样式之后，谁写在里面谁就赢，很容易把这里的意图悄悄盖掉。 */
+blockquote {
+    color: var(--color-blockquote);
 }
 a {
     color: var(--color-link);

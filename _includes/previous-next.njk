@@ -1,14 +1,18 @@
-<!-- Previous Post -->
-{% set prePost = collections.posts | getPreviousCollectionItem %}
-<!-- Next Post -->
-{% set nextPost = collections.posts | getNextCollectionItem %}
+{# 上一篇 / 下一篇。
+   原来这里直接输出两个裸 <li>，外面没有任何 <ul>/<ol>，只是靠浏览器对 li 的
+   list-item 默认值才显示出来——渲染成两个带圆点、紧贴虚线的列表项，看着像没写完。
+   换成真正的 <nav>，样式在 article.css 的 .post-nav 里。 #}
+{% set prePost = collections.posts | getPreviousCollectionItem %} {% set nextPost =
+collections.posts | getNextCollectionItem %}
 
-<!-- Add Previous Link. -->
-{% if prePost %}
-<li>Previous: <a href=".{{ prePost.url }}">{{ prePost.data.title }}</a></li>
-{% endif %}
-
-<!-- Add Next Link. -->
-{% if nextPost %}
-<li>Next: <a href=".{{ nextPost.url }}">{{ nextPost.data.title }}</a></li>
-{% endif %}
+<nav class="post-nav" aria-label="Post navigation">
+  {% if prePost %}
+  <div class="post-nav-item">
+    Previous: <a href=".{{ prePost.url }}">{{ prePost.data.title }}</a>
+  </div>
+  {% endif %} {% if nextPost %}
+  <div class="post-nav-item">
+    Next: <a href=".{{ nextPost.url }}">{{ nextPost.data.title }}</a>
+  </div>
+  {% endif %}
+</nav>

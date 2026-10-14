@@ -26,15 +26,19 @@ h1.title {
 }
 i,
 i a {
-  color: #999999;
+  /* 颜色改到 colors.css 的 --color-emphasis（原 #999999 是 2.85:1）。
+     这里保留 font-style: normal：楷体没有真斜体，浏览器合成出来的斜体很难看。 */
+  color: var(--color-emphasis);
   font-style: normal;
 }
 .org-face-salient {
   font-weight: 400;
 }
 
+/* 颜色由 colors.css 给（--color-blockquote），这里只管排版。
+   原来这里写的 color: #999999 会盖掉 colors.css——article.css 是从 <body> 链进来的，
+   比 <head> 里所有样式都晚，所以那行把引用块压成了 2.85:1。 */
 blockquote {
-  color: #999999;
   padding-top: 0;
   margin-left: 1em;
   padding-left: 1em;
@@ -72,6 +76,17 @@ ol.org-ol {
   border-top: 1px dashed #ccc; /* 设置顶部边框为虚线 */
 }
 
+/* 上一篇 / 下一篇。
+   原来这里是两个裸 <li>，外面没有任何 <ul>，靠浏览器给 list-item 兜底才显示出来，
+   于是渲染成两个紧贴虚线的圆点列表项，看着像没写完。换成真正的 <nav>，
+   两行之间给一点行距。 */
+.post-nav {
+  margin: 1rem 0 0;
+}
+.post-nav-item + .post-nav-item {
+  margin-top: 0.35rem;
+}
+
 body {
   counter-reset: section;
 }
@@ -79,12 +94,52 @@ h2 {
   counter-reset: subsection;
 }
 
+/* 图片。
+   原来写的是 width: 90%，结果是既不满宽也不居中：右边空出一条白。
+   <figure> 还带着 UA 默认的左右各 40px margin（见下面的 article figure），
+   90% 又是在那 760px 上算的，最后落在正文 840px 的列里只有 684px。
+   现在不给固定宽度，按自然尺寸走——大图缩到列宽，小图保持原尺寸并居中，
+   不会被拉大。 */
 article img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
   border-radius: 15px;
-  width: 90%;
+}
+
+/* <figure> 的 UA 默认是 margin: 1em 40px。那 40px 会把整块图片往里推，
+   跟正文左右都不齐。上下留白保留，左右收掉。 */
+article figure {
+  margin: 1.5em 0;
 }
 
 center {
   display: flex;
   justify-content: center;
+}
+
+/* 标题下那行标签（tag-in-post.njk 用 <center> 包住）。
+   不能沿用 base.css 里 .categories 的 grid，两种收缩方式都会出错：
+   按内容收缩时 auto-fill 只铺一列，两个标签会上下堆叠；
+   靠 min-width: 10rem 撑出第二列，单标签就会占着一个空列——
+   容器居中、内容却在第一列，整行看着居中、标签实际偏左半个列宽
+   （(5rem + 0.5rem) / 2 = 44px）。
+   换成满宽的 flex 容器 + justify-content: center，居中的是内容本身，
+   跟标签个数无关。每项仍固定 5rem，跟原来的网格列同宽，标签大小不变。 */
+article .categories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+article .categories > * {
+  flex: 0 0 5rem;
+}
+
+@media (max-width: 768px) {
+  article .categories > * {
+    flex-basis: 3rem; /* 跟 media.css 里 .categories 的 3rem 列宽对齐 */
+  }
 }

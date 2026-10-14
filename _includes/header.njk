@@ -1,9 +1,23 @@
+{#
+  头部导航。
+  navs 里现在两条都是 position: "footer"（原来那条 position: "header" 的语言切换
+  在 c197549「Eliminate unused navigation data」里删掉了），所以这块目前什么都不渲染。
+
+  以前不管有没有头部链接，都固定画一个 "Menu" 汉堡出来。手机上点开只是多出 32px
+  空白（nav.css 里 .nav:has(.nav-active-checkbox:checked) 的 padding-top: 2rem），
+  一个链接都没有——点不动的按钮。现在整块只有真的存在头部导航时才输出，
+  以后往 _data/navs.js 里加一条 position: "header" 就会自己回来。
+#}
+{% set headerNavs = [] %}
+{% for nav in navs %}{% if nav.position == 'header' %}{% set _ = headerNavs.push(nav) %}{% endif %}{% endfor %}
+
 <header>
   <div id="preamble">
     <div>
       <a aria-current="page" class="header-title" href="./">
         {{ project.title }}
       </a>
+      {% if headerNavs.length %}
       <div class="nav">
         <input type="checkbox" id="nav-active" class="nav-active-checkbox" />
         <div class="nav__toggle">
@@ -11,20 +25,18 @@
             <span>Menu</span>
           </label>
         </div>
-        {% for nav in navs %} {% if nav.position == 'header' %}
+        {% for nav in headerNavs %}
         <div class="image-container">
+          {# 图标和文字合成一个链接。原来是两个指向同一 href 的 <a>，
+             屏幕阅读器会把同一个目标念两遍。图标旁边就有文字，所以 alt 留空。 #}
           <a href="{{ nav.href }}" class="{{ nav.type }}">
-            <img
-              width="24"
-              height="24"
-              src="{{ nav.src }}"
-              alt="{{ nav.type }}"
-            />
+            <img width="24" height="24" src="{{ nav.src }}" alt="" />
+            <span class="image-text">{{ nav.show }}</span>
           </a>
-          <a href="{{ nav.href }}" class="image-text"> {{nav.show}} </a>
         </div>
-        {% endif %} {% endfor %}
+        {% endfor %}
       </div>
+      {% endif %}
       <div class="header-line"></div>
     </div>
   </div>

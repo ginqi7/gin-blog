@@ -16,7 +16,11 @@
       </div>
       {% endfor %} {% endif %}
     </div>
-    <div class="card-summary">{{ post.content | abstract }}</div>
+    {# 摘要为空时不渲染这一块。以前渲染出一个空的 .card-summary，它自己的
+       margin-bottom: 32px 会在标签和 Read more 之间留一段说不清来历的空白。 #}
+    {% set summary = post.content | abstract %} {% if summary %}
+    <div class="card-summary">{{ summary }}</div>
+    {% endif %}
     <a href=".{{ post.url }}" class="read-more-btn">Read more</a>
   </div>
   {% endif %} {% endfor %}

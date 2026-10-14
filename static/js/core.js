@@ -13,8 +13,7 @@ function filterPost(tags) {
   }
   items.forEach(function (item) {
     const hasTags = getAllTags(item);
-    const isIntersecting = tags.some((item) => hasTags.includes(item));
-    console.log(isIntersecting);
+    const isIntersecting = tags.some((tag) => hasTags.includes(tag));
     if (isIntersecting) {
       item.classList.remove("hidden");
     } else {
@@ -29,7 +28,6 @@ checkboxes.forEach(function (checkbox) {
     const sameCheckboxes = document.querySelectorAll(
       `input[value="${this.value}"]`,
     );
-    console.log(sameCheckboxes);
     const checked = this.checked;
     sameCheckboxes.forEach((box) => (box.checked = checked));
     if (this.checked) {

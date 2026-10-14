@@ -17,7 +17,9 @@ header .nav {
 .image-container {
     display: flex; /* 将容器设为 flex 容器 */
     align-items: center; /* 垂直居中所有 flex 子项 */
-    gap: 0.5; /* 可选：在图片和文字之间添加一些间距 */
+    /* 原为 gap: 0.5 —— 漏了单位，整条声明无效，所以间距一直是 0。
+       现在图标和文字合并在同一个 <a> 里，间距由下面 a 上的 gap 负责。 */
+    gap: 0.5rem;
 }
 
 header .nav span,
@@ -43,8 +45,12 @@ footer img {
 }
 
 footer .image-container a {
+    /* 图标和文字现在同属一个 <a>，让它自己排成一行 */
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
     text-decoration: none;
-    font-size: 0.7rem;
+    font-size: 0.85rem; /* 原 0.7rem = 11.2px，偏小 */
     color: var(--color-text);
 }
 

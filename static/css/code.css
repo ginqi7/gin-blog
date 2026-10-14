@@ -261,6 +261,22 @@ pre:hover {
     overflow-y: auto;
 }
 
+/* 触摸设备：没有 hover，"移上去展开"这条路根本触发不了。
+   结果超过 20em 的代码块被 max-height 永久裁掉，overflow: hidden 又堵死了内部滚动
+   ——/tproxy/ 第二个代码块 572px 只剩 322px，四成内容在手机上看不到。
+   这里直接取消折叠（连 :hover 那条一起覆盖掉，免得触屏上的合成 hover 又把它裁回去），
+   长代码块整个展开。代价是页面变长，但内容看得见比页面短重要。 */
+@media (hover: none) {
+    pre,
+    pre:hover {
+        max-height: none;
+        overflow: visible;
+    }
+    .code-fade {
+        display: none; /* 不再裁切，也就不需要"下面还有"的提示 */
+    }
+}
+
 /* 块级代码的 <code> 不要行内代码那套底色和内边距。
    colors.css 里的 `code { ... }` 是给行内代码用的，但它同样命中 pre > code。
    底色的问题是：<code> 是行内元素，底色只铺在文字本身、不铺满整行宽度，

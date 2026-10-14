@@ -8,8 +8,9 @@
       </div>
     </div>
     <div class="categories">
-      {% if post.data.tags %} {% set tagsList = post.data.tags %} {% include
-      'tag.njk' %} {% endif %}
+      {% if post.data.tags %} {% set tagsList = post.data.tags %}
+      {# 每篇一个前缀，免得 tag.njk 里的 id 在整页里重复 #}
+      {% set tagScope = "p" + loop.index %} {% include 'tag.njk' %} {% endif %}
     </div>
   </div>
   {% endif %} {% endfor %}

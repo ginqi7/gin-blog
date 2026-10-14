@@ -4,7 +4,12 @@ layout: archive-layout.njk
 ---
 
 <!-- Categories Section -->
-<h1 clss="title">Categories</h1>
+{# 原来写的是 clss="title"（少了 a），所以 "Categories" 拿不到 .title 的样式。
+   底下 "Archive" 拿得到，移动端 media.css 只缩 h1.title，于是两个标题不同号。 #}
+<h1 class="title">Categories</h1>
+{# 这组复选框是筛选器的"真身"：每个标签一份，id 用 filter 前缀。
+   post-list 里每篇帖子还会再渲染一份，那边用 p<N> 前缀，避免 id 撞车。 #}
+{% set tagScope = "filter" %}
 <div class="categories">
   {% set tagsList = collections.tagsList %} {% include 'tag.njk' %}
 </div>
@@ -14,4 +19,4 @@ layout: archive-layout.njk
   {% set postList = collections.posts | reverse %} {% include 'post-list.njk' %}
 </div>
 
-<script type="text/javascript" src="{{ './static/js/core.js' | version }}"></script>
+{# core.js 已经由 base-layout.njk 在 </body> 前加载过一次，这里不必再来一遍。 #}
