@@ -1,0 +1,52 @@
+---
+permalink: "/feed.xml"
+layout: false
+eleventyExcludeFromCollections: true
+eleventyImport:
+  collections: ["posts"]
+---
+{# RSS 2.0。
+
+   本来 @11ty/eleventy-plugin-rss 的 feedPlugin 一行配置就能生成，
+   这里却手写了模板，只因为一处地址解析的差异：
+
+   插件模板里写死了 `post.content | renderTransforms(post.data.page, metadata.base)`，
+   而 renderTransforms 会把正文里的相对地址按「页面路径」解析
+   （Eleventy 的 HtmlBasePlugin.js transformUrl：pageUrl 非空且 url 不以 / 开头时，
+   先 new URL(url, pageUrl) 求出绝对路径）。
+
+   本站每页都带 <base href="/">，相对地址实际是相对站点根解析的，两者答案不同：
+   org 源里的 [[./images/foo.png]] 在页面上是 /images/foo.png（能打开），
+   经 feedPlugin 却成了 /dictionary-overlay/images/foo.png（404）。
+   下面 transformWithHtmlBase 的第三个参数把 pageUrl 覆盖成 "/"，让它按站点根解析，
+   与页面上的 <base> 语义一致。
+
+   想改回 feedPlugin 之前，先确认阅读器里的图片还能显示。 #}
+{#- 下面到 <?xml 之间必须一个空白字符都不输出：XML 声明只允许出现在文档最开头，
+    前面多一个换行 xmllint 就报 "XML declaration allowed only at the start of the document"。
+    所以这几个标签全部带上 - 做白空格剪切。 #}
+{%- set limit = 20 -%}
+{%- set feedUrl = "/feed.xml" | htmlBaseUrl(project.siteURL) -%}
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ project.title }}</title>
+    <link>{{ project.siteURL }}</link>
+    <atom:link href="{{ feedUrl }}" rel="self" type="application/rss+xml" />
+    <description>This is a blog for {{ project.author }}.</description>
+    <language>zh-CN</language>
+    {%- for post in collections.posts | reverse %}
+    {%- if loop.index <= limit %}
+    {%- set absolutePostUrl = post.url | htmlBaseUrl(project.siteURL) %}
+    <item>
+      <title>{{ post.data.title }}</title>
+      <link>{{ absolutePostUrl }}</link>
+      <description>{{ post.content | transformWithHtmlBase(project.siteURL, "/") }}</description>
+      <pubDate>{{ post.date | dateToRfc822 }}</pubDate>
+      <dc:creator>{{ project.author }}</dc:creator>
+      <guid>{{ absolutePostUrl }}</guid>
+    </item>
+    {%- endif %}
+    {%- endfor %}
+  </channel>
+</rss>

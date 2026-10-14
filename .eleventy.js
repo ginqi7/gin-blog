@@ -1,7 +1,7 @@
 import fs from "fs";
 import CleanCSS from "clean-css";
 import linkifyHtml from "linkify-html";
-import { feedPlugin } from "@11ty/eleventy-plugin-rss";
+import rssPlugin from "@11ty/eleventy-plugin-rss";
 import pluginOrgMode from "./plugins/org-mode.js";
 import pluginDateFormat from "./plugins/date-format.js";
 import abstract from "./plugins/abstract.js";
@@ -27,6 +27,12 @@ export default function (eleventyConfig) {
   eleventyConfig.addPlugin(pluginDateFormat);
   eleventyConfig.addPlugin(abstract);
   eleventyConfig.addPlugin(subsetFont);
+
+  // RSS。这里加的是 rssPlugin 而不是 feedPlugin：feedPlugin 会顺带注册一个模板，
+  // 而那个模板解析相对地址的方式跟本站的 <base href="/"> 冲突（详见 feed.njk 顶部）。
+  // rssPlugin 只提供过滤器（dateToRfc822、htmlBaseUrl、transformWithHtmlBase……），
+  // 模板由根目录的 feed.njk 自己写，生成 /feed.xml。
+  eleventyConfig.addPlugin(rssPlugin);
 
   eleventyConfig.addFilter("allLinks", allLinks);
   eleventyConfig.addGlobalData("layout", "post-layout");
