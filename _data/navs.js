@@ -19,7 +19,7 @@ export default function () {
     {
       type: "rss",
       src: "/static/svg/rss.svg",
-      href: "/feed.xml",
+      href: "./feed.xml",
       show: "(RSS)",
       position: "footer",
     },
