@@ -168,9 +168,14 @@ footer {
   height: 0;
 }
 
-.hidden-checkbox:checked + .custom-label {
-  background-color: green;
-  color: white;
+/* 选中态：淡蓝底 + 链接色边框/文字，跟 --color-link 同一色系。
+   原来的 green/white 在这套近乎灰度的配色里太跳。
+   填充落在 .category-item 而不是 <label>：边框和内边距在父级，
+   只给 label 上色的话淡蓝会缩在文字那一小块里。 */
+.category-item:has(.hidden-checkbox:checked) {
+  background-color: var(--color-tag-selected-bg);
+  color: var(--color-link);
+  border-color: var(--color-link);
 }
 
 /* Label 的基础样式 */
