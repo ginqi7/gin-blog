@@ -57,6 +57,28 @@
   text-align: center; /* 标题居中 */
 }
 
+/* 标签行。base.css 的 .categories 是 grid + repeat(auto-fill, minmax(5rem, 1fr))，
+   768px 以下还有一条 minmax(3rem, 1fr) 的媒体查询。3rem = 48px，而 #software
+   在 0.9rem 下要 65px 左右，于是每颗标签被压进 48px 的格子；body 上继承下来的
+   overflow-wrap: break-word 就在单词中间下刀，渲染成 #softwa / re，
+   旁边的 #macos 一样被切成两截。卡片越窄越明显。
+   标签是内容尺寸的胶囊，按内容排布才是对的模型：flex + wrap，每项 flex: 0 0 auto
+   不再被压缩，一行放不下就整颗换到下一行，永远不会从词中间断开。
+   min-width: 0 覆盖 base.css 的 min-width: 10rem —— 那条会让标签容器在窄卡片上
+   强行撑到 160px，比卡片还宽。 */
+.post-card .categories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.post-card .card-tag {
+  flex: 0 0 auto;
+  /* 只有单颗标签本身就比卡片宽时才会走到 break-word 兜底，好过溢出卡片 */
+  max-width: 100%;
+}
+
 .card-tag a {
   font-size: 0.9rem;
   color: #6b7280; /* 中灰色 */
@@ -86,11 +108,13 @@
   line-height: 1.7; /* 增加行高，提升可读性 */
   margin-bottom: 32px;
 
-  /* 不要加 align-self: stretch。.post-card 是 align-items: center 的纵向 flex，
-     日期/标题/标签/按钮都居中，摘要靠这条规则跟着居中成一整块。
-     一旦撑满，摘要盒子永远等于卡片内宽（802px），短摘要的文字只占左边一截，
-     右边空一片，跟上下居中的元素对不齐——比字数长短不齐更难看。 */
-  /* 关键点：虽然卡片居中，但正文通常左对齐更易阅读 */
+  /* 盒子居中，盒子里的文字左对齐。
+     .post-card 是 align-items: center 的纵向 flex，flex item 的横向尺寸按内容算
+     并居中，所以盒子本来就居中——但只有内容窄到不满一行时才看得出来。摘要一旦是
+     长段落，内容宽超过卡片内宽，盒子被撑满（桌面 802px），"居中"就没有任何可见
+     效果，文字左边缘照样贴着卡片左边。给个 max-width 把盒子收窄，居中才看得见。
+     盒子收窄后文字仍然左对齐：居中的是这一整块，不是每一行。 */
+  max-width: 40rem;
   text-align: left;
 
   /* 可选：如果你希望像图片那样文字末尾出现省略号 */
