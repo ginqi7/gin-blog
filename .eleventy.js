@@ -89,23 +89,42 @@ export default function (eleventyConfig) {
     });
   });
 
-  // minify css
-  // minifyCss();
-}
-
-function minifyCss() {
-  const sourceCssDir = "static/css/";
-  const targetCssDir = "_site/static/css/";
-  if (!fs.existsSync(targetCssDir)) {
-    fs.mkdirSync(targetCssDir, { recursive: true });
-  }
-  const files = fs.readdirSync(sourceCssDir);
-  files.forEach((file) => {
-    var inputFile = sourceCssDir + file;
-    var input = fs.readFileSync(inputFile, "utf8");
-    var output = new CleanCSS().minify(input);
-    fs.writeFile(targetCssDir + file, output.styles, function (err) {
-      if (err) return console.log("Error minifying main.css" + err);
-    });
+  // 压缩 CSS。必须挂在 eleventy.after 上，不能像原来那样在配置阶段直接调用：
+  // addPassthroughCopy("static/css/*") 是构建过程中才把源文件原样复制进
+  // _site/static/css/ 的，配置阶段写出去的结果会被它整个盖回来——这正是这段
+  // 代码此前一直被注释掉的原因，取消注释也不会生效。
+  // 所以这里在产物目录里原地压缩刚复制过去的文件，而不是从 static/css/ 读源文件
+  // 写产物目录：压缩的一定是最终真被访问的那份。
+  eleventyConfig.on("eleventy.after", () => {
+    const cssDir = "_site/static/css/";
+    let before = 0;
+    let after = 0;
+    let count = 0;
+    try {
+      for (const file of fs.readdirSync(cssDir)) {
+        if (!file.endsWith(".css")) continue;
+        const source = fs.readFileSync(cssDir + file, "utf8");
+        // level 1 只做安全的重写：去空白和注释、合并内容完全相同的重复规则、
+        // 0px 这样的写法缩短。level 2 会重排并合并相邻规则，全站只多省 3%
+        // （435 字节），不值得为这点收益去变动手写的样式。
+        const result = new CleanCSS({ level: 1 }).minify(source);
+        if (result.errors.length > 0) {
+          throw new Error(`${file}: ${result.errors.join("; ")}`);
+        }
+        fs.writeFileSync(cssDir + file, result.styles);
+        before += Buffer.byteLength(source);
+        after += Buffer.byteLength(result.styles);
+        count++;
+      }
+    } catch (err) {
+      // 压缩失败就用未压缩的 CSS，站点照常可用；这里要是抛出去，
+      // 整个部署会因为样式文件而失败。可能已经压了一部分文件，那也没关系，
+      // 压缩前后的 CSS 语义相同。
+      console.error(`[minify-css] 压缩失败，本次保留未压缩的 CSS：${err.message}`);
+      return;
+    }
+    console.log(
+      `[minify-css] ${count} 个文件 ${(before / 1024).toFixed(1)} KB -> ${(after / 1024).toFixed(1)} KB`,
+    );
   });
 }
