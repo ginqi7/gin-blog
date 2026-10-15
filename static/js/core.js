@@ -180,3 +180,23 @@ window.addEventListener("resize", () => {
   clearTimeout(clipResizeTimer);
   clipResizeTimer = setTimeout(refreshClippedBlocks, 200);
 });
+
+/* ---- 站内搜索：让 (Search) 那几个字也能点开 ---- */
+
+// <pagefind-modal-trigger> 只把点击绑在自己内部那个 <button> 上，旁边并排的
+// <span class="search-label"> 点了不会触发打开。页脚其他条目都是「图标 + 文字」
+// 合起来一个链接，这里也让它整体可点。
+//
+// 一定要点到里面那个真的 <button> 上。这个组件是 light DOM（实测没有 shadowRoot），
+// 按钮就是它的直接子节点；在宿主元素上 .click() 是没用的——light DOM 没有影子边界
+// 那层事件重定向，宿主收到点击不会自己落到子按钮上。
+// shadowRoot 那一支留着，是为了它哪天改回 shadow DOM 时不至于又这么静默失效。
+(function () {
+  const label = document.querySelector(".search-label");
+  const trigger = document.querySelector("pagefind-modal-trigger");
+  if (!label || !trigger) return; // 页面上没有搜索（没建索引时也会走到这）
+  label.addEventListener("click", () => {
+    const inner = (trigger.shadowRoot || trigger).querySelector("button");
+    (inner || trigger).click();
+  });
+})();

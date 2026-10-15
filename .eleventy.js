@@ -6,6 +6,7 @@ import pluginOrgMode from "./plugins/org-mode.js";
 import pluginDateFormat from "./plugins/date-format.js";
 import abstract from "./plugins/abstract.js";
 import subsetFont from "./plugins/subset-font.js";
+import pluginPagefind from "./plugins/pagefind.js";
 
 function allLinks(data) {
   return data.map((item) => {
@@ -27,6 +28,8 @@ export default function (eleventyConfig) {
   eleventyConfig.addPlugin(pluginDateFormat);
   eleventyConfig.addPlugin(abstract);
   eleventyConfig.addPlugin(subsetFont);
+  // 站内搜索。要放在最后：它索引的是 _site 里最终的 HTML，跑在构建收尾。
+  eleventyConfig.addPlugin(pluginPagefind);
 
   // RSS。这里加的是 rssPlugin 而不是 feedPlugin：feedPlugin 会顺带注册一个模板，
   // 而那个模板解析相对地址的方式跟本站的 <base href="/"> 冲突（详见 feed.njk 顶部）。

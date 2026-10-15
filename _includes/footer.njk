@@ -34,6 +34,18 @@
       </a>
     </div>
     {% endif %} {% endfor %}
+
+    {#- 搜索不放进 navs 数据里。navs 会被内容仓库的 _data 挂载整个覆盖掉
+        （就是上面那段注释说的坑），放进去的话内容仓库一旦自带 navs.js，
+        搜索图标在线上就没了。写死在模板里，任何仓库都保证有。
+
+        compact 让它只画图标不画自带文字，hide-shortcut 去掉 ⌘K 提示——
+        页脚其他图标都是「纯图标 + 括号文字」，这样才齐。
+        data-pagefind-ignore 防止这几个字被当成正文索引进每一页。 #}
+    <div class="image-container" data-pagefind-ignore>
+      <pagefind-modal-trigger compact hide-shortcut></pagefind-modal-trigger>
+      <span class="image-text search-label">(Search)</span>
+    </div>
   </div>
 
   <div>

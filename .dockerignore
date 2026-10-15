@@ -1,0 +1,17 @@
+# Dockerfile 是先 `RUN npm install` 再 `COPY . .`，所以构建上下文里的
+# node_modules 会整份盖到容器刚装好的那份上面。宿主机的原生二进制（macOS/arm64）
+# 混进 Alpine 镜像后不一定立刻出问题——ttf2woff2 这种有 WASM 兜底的照样能跑，
+# 所以这个坑一直没暴露。Pagefind 带的是 57 MB 的 darwin 原生二进制，没有兜底，
+# 必须在这里拦掉，让容器用自己装的那份 linux-musl 构建。
+node_modules
+
+# 宿主机跑出来的产物。镜像里由 RUN npx eleventy 自己生成，带进去只会是
+# 一份过期而且是在 macOS 上构建的副本。部署时这个目录还会被 bind mount 覆盖。
+_site
+
+.git
+
+# scripts/subset-fonts.sh 建的 fontTools venv，跟构建无关。
+.fontwork
+
+.DS_Store

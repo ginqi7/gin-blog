@@ -13,6 +13,7 @@
         "fontmin": "^1.1.0",
         "linkify-html": "^4.2.0",
         "linkifyjs": "^4.2.0",
-        "node-pandoc": "^0.3.0"
+        "node-pandoc": "^0.3.0",
+        "pagefind": "^1.5.2"
     }
 }

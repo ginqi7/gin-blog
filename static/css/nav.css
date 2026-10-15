@@ -54,6 +54,88 @@ footer .image-container a {
     color: var(--color-text);
 }
 
+/* Search */
+
+/* 页脚的放大镜。Pagefind 的 <pagefind-modal-trigger compact> 只省掉了按钮上的
+   文字，按钮本身还是它自己那套「36px 高、带边框、带内边距的搜索框」样式，
+   摆在一排 16px 图标中间会非常突兀。这里把它压回成裸图标。
+
+   直接写 .pf-trigger-btn / .pf-trigger-icon 是没办法的事：Pagefind 没有暴露
+   ::part() 或其它选择器钩子，组件又是 light DOM（实测没有 shadowRoot），
+   只能落到它内部的类名上。改版失效的后果也仅仅是图标退回成一个方框，
+   不会把搜索弄坏，所以可以接受。所有规则都用 footer 限定，不波及别处。
+
+   必须带 !important：Pagefind 为了压过宿主的 all: initial，把选择器写成了
+   `:is(*, #\#):is(*, #\#):is(*, #\#) .pf-trigger-btn` —— #\# 是 id 选择器，
+   每个 :is() 取参数里最高的特异性，于是整个选择器是 (3,1,0)。
+   靠堆 id 去追它只会更难读，这种"对手故意拉高特异性"的场合就是 !important 的用途。 */
+footer pagefind-modal-trigger .pf-trigger-btn {
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    background: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+}
+
+footer pagefind-modal-trigger .pf-trigger-icon {
+    width: 16px !important; /* 跟旁边 footer img 的 16px 对齐 */
+    height: 16px !important;
+    /* 图标是 mask，颜色由 background 给。旁边那些 <img> 引用的 svg 里写的是
+       stroke="currentColor"，在 <img> 里没有继承来源，实际渲染成纯黑，
+       所以这里也用黑色，否则搜索图标会比兄弟图标淡一档。 */
+    background: #000 !important;
+
+    /* 换成站点那套 24 视框、2px 描边的放大镜（跟旁边图标同源）。
+       这里直接写 mask-image，而不是去覆盖 Pagefind 的 --pf-icon-search 变量：
+       自定义属性里的相对 url() 是在**消费它的那条规则所在的样式表**里解析的，
+       不是声明它的地方。改成变量的话，会被 pagefind-component-ui.css（在
+       /pagefind/ 下）解析成 /svg/search.svg，404。
+       写在真实声明里就按本文件的位置解析，本地和子路径部署都对。
+       改版失效的后果只是图标变回 Pagefind 默认那个，不会坏掉。 */
+    -webkit-mask-image: url("../svg/search.svg") !important;
+    mask-image: url("../svg/search.svg") !important;
+}
+
+footer .image-container:has(.search-label) {
+    gap: 0.35rem; /* 跟其它条目 <a> 里的图标-文字间距一致 */
+}
+
+footer .search-label {
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--color-text);
+}
+
+/* Pagefind 自带的主题变量是一套无衬线深色系，跟本站的衬线排版不是一回事。
+   映射到站点既有的颜色和字体变量上；本站只有浅色，不用管它的深色模式。
+   挂在 :root 而不是组件上，是因为弹出来的 <dialog> 在 top layer，
+   不在 footer 的子树里。 */
+:root {
+    --pf-font: var(--font-family-primary);
+    --pf-text: var(--color-text);
+    --pf-text-secondary: var(--color-blockquote);
+    --pf-text-muted: var(--color-helptext);
+    --pf-background: var(--color-background);
+    --pf-border-focus: var(--color-primary);
+    /* 焦点环。Pagefind 自己画（.pf-trigger-btn:focus-visible 等十余处都用它），
+       默认值 #0969da 是 GitHub 那支蓝。站上唯一的焦点环先例是 code.css 的
+       .code-copy:focus-visible，用的是 --color-link (#3273dc)，这里对齐它。 */
+    --pf-outline-focus: var(--color-link);
+    /* 命中词。Pagefind 把 --pf-mark 当**字色**用，不是荧光笔底色：
+       .pf-result-excerpt mark { background: transparent; font-weight: 500;
+       color: var(--pf-mark) }。它自己的浅色默认值就是正文色 #1a1a1a，
+       也就是"只靠加粗"。
+       原来这里填的是 --color-tag-selected-bg (#eaf1fb)，那是标签选中态的
+       **底**色，拿来当字色就是浅蓝写在白底上，实测 #eaf1fb on #fff 只有
+       1.1:1，命中词几乎看不见。
+       改成 --color-heading (#222)：比正文 #444 深一档，配上它自带的 500
+       字重，既不引入新色相，也不会跟链接蓝混起来。 */
+    --pf-mark: var(--color-heading);
+    --pf-modal-backdrop: rgba(0, 0, 0, 0.4);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     header .nav__toggle {

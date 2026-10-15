@@ -1,5 +1,10 @@
-<!doctype html>
-<html lang="{{ lang.type }}">
+{#- lang 以前写的是 lang.type，但 _data/lang.js 从来没存在过（git 历史里也没有），
+    所以全站渲染出来一直是 <html lang="">。这不只是 a11y/SEO 的问题：站内搜索用
+    Pagefind，它按这个属性决定用哪种语言做分词，为空就归到 "unknown"，中文页会按
+    英文处理——整句没有空格的中文变成一个巨型 token，搜「马车」都搜不到。
+    取值只能放内容仓库的 project.js：部署时整个 _data 被挂载覆盖（原因见 footer.njk），
+    _data/lang.js 放这个仓库里在线上是死的。 #}
+<html lang="{{ project.lang or 'en' }}">
   <head>
     <base href="{{ project.baseURL }}" />
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
@@ -21,6 +26,19 @@
       title="{{ project.title }}"
       href="/feed.xml"
     />
+    {# 站内搜索。这两个文件是 plugins/pagefind.js 在构建收尾生成的，模板渲染时
+       还不存在，所以不套 version 过滤器：一来加了查询串会让 Pagefind 从脚本 URL
+       反推 bundlePath 时推歪，二来它自己的产物名本来就带内容标识。
+
+       必须排在下面那批站点样式**前面**：Pagefind 在 :root 上定义了一套 --pf-*
+       主题变量，nav.css 里用同样的 :root 覆盖它们，两者特异性相同，谁后加载谁赢。 #}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="./pagefind/pagefind-component-ui.css"
+    />
+    <script src="./pagefind/pagefind-component-ui.js" type="module"></script>
+
     <link
       rel="stylesheet"
       type="text/css"
@@ -70,11 +88,44 @@
       href="{{ './static/css/colors.css' | version }}"
       defer
     />
+
     <title>{{ project.title }}</title>
   </head>
 
   <body>
+    {#- 两个路径都得显式给，不靠自动探测：
+        - bundle-path 是搜索资源（JS/CSS/索引）的位置
+        - base-url 会前缀到每一条搜索结果链接上，默认 "/"
+        站点可能部署在子路径下（project.baseURL，如 "/zh-blog/"），两个都得带上，
+        否则结果链接会指向 qiqijin.com/posts/... 这种 404 地址——跟 feed 踩过的是
+        同一个坑。本地 baseURL 是 "/"，拼出来正好是默认值。
+
+        lang 是**界面文案**的语言，跟上面 <html lang> 是两件事：那个决定 Pagefind
+        按哪种语言分词建索引，这个只决定按钮上写「搜索」还是 "Search"，组件里
+        就是 s.setLanguage(attr)。这里钉死英文，理由有两条：
+
+        1. 站上所有界面文字本来就是英文——(Github)/(Email)/(RSS)、See more posts »、
+           Categories、复制按钮的 Copy——搜索框说中文反而突兀。
+        2. 更要紧的是字形。subset-font 只从 _site/**/*.html 收字符，而模态框里的
+           「找到 N 个…的相关结果」「加载更多结果」这些串是 Pagefind 在 JS 里
+           运行时生成的，压根不在 HTML 里。实测（zh-out 产物 + 组件 JS 的 \uXXXX
+           转义表求差）：简体的「筛」（筛选）和「载」（加载结果/加载中）不在子集里，
+           会掉回系统字体——跟周围中文不是一套字形，而且只在特定状态下才现形。
+           钉成英文后全部落在 Alegreya 上，跟站内其它英文文案一致。
+           反过来去补一份"Pagefind 会用到哪些字"的清单是没法维护的：那张表里
+           还混着 zh-TW/ja 的字，Pagefind 一升级就得重新对一遍。 #}
+    <pagefind-config
+      bundle-path="{{ project.baseURL }}pagefind/"
+      base-url="{{ project.baseURL }}"
+      lang="en"
+    ></pagefind-config>
+
     {{ content | safe }}
+
+    {#- 空元素，Pagefind 会自己展开成 header/输入框/结果/页脚。
+        reset-on-close 让下次打开是干净的。data-pagefind-ignore 是防止这些
+        标记和 (Search) 字样被当成正文索引进每一页。 #}
+    <pagefind-modal reset-on-close data-pagefind-ignore></pagefind-modal>
   </body>
   <script type="text/javascript" src="{{ './static/js/core.js' | version }}"></script>
 </html>
